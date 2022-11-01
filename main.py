@@ -10,6 +10,7 @@ def prepare_dataframe():
     features = features.drop_duplicates()
     df = pd.merge(features, GZ1, on='OBJID', how='inner')
     df = df[df.UNCERTAIN==0].drop(columns=['UNCERTAIN']) #remove Uncertain category, i.e. not elliptical nor spiral
+    df = df[df.Error==0] #Keep successful CyMorph processes only. See kaggle.com/datasets/saurabhshahane/galaxy-classification
     return df
 
 def main():
