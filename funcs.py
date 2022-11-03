@@ -19,7 +19,7 @@ def parse_args():
 
     return parser.parse_args()
 
-def prepare_dataframe():
+def prepare_dataframe(sample_size):
     GZ1 = pd.read_csv('data/GalaxyZoo1/GZ1.csv') #Galaxy zoo data from data.galaxyzoo.org (unwanted columns removed)
     features = pd.read_csv('data/features/features.csv') 
                     #from sciencedirect.com/science/article/pii/S2213133719300757 (unwanted columns removed)
@@ -29,7 +29,9 @@ def prepare_dataframe():
     df = df[df.UNCERTAIN==0].drop(columns=['UNCERTAIN']) #remove Uncertain category, i.e. not elliptical nor spiral
     df = df[df.Error==0] #Keep successful CyMorph processes only. See kaggle.com/datasets/saurabhshahane/galaxy-classification
     df = df[(df['G2']>-6000) & (df['S']>-6000) & (df['A']>-6000) & (df['C']>-6000)] #discard outliers
-    df = df.drop(['Error', 'TType'], axis=1).reset_index(drop=True) #FIXME keep ttype? ttype is mix of string and float.
+    df = df.drop(['Error', 'TType'], axis=1) # ttype is a mix of str and float; discarded for now (needs convert to float)
+    df = df.sample(n=sample_size, random_state=33)
+    df = df.reset_index(drop=True)
     return df
 
 def get_train_test(df):

@@ -34,7 +34,7 @@
 ######################
 
 load_model: False
-model_file: /Users/marcinjastrzebski/Desktop/ACADEMIA/TrackML/QuantumKernelEstimation/sliced_detector_analysis/saved_classifiers/model_from_example.sav
+model_file: model_from_config1.sav
 #tracklet_dataset: triplet
 #division: new_phi
 #region_id: '0'
@@ -45,7 +45,7 @@ num_train: 1
 class_weight: 
   0: 1.0
   1: 1.0
-classical: False
+classical: True
 gamma: 1
 C_class: 1.0e+6
 alpha: 0.1
