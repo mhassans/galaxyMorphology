@@ -53,5 +53,4 @@ C_quant: 1.0e+6
 single_mapping: 1
 pair_mapping: 1
 interaction: YY
-circuit_width: 9
-
+circuit_width: 6
