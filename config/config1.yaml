@@ -45,7 +45,7 @@ num_train: 1
 class_weight: 
   0: 1.0
   1: 1.0
-classical: True
+classical: False
 gamma: 1
 C_class: 1.0e+6
 alpha: 0.1
