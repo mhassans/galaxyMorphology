@@ -5,7 +5,7 @@ from QKE_SVC import QKE_SVC
 from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data
 
 config, config_filename = load_config(parse_args().config)
-df = prepare_dataframe(TrainPlusTestSize=100)
+df = prepare_dataframe(TrainPlusTestSize=1000)
 train_data, train_labels, test_data, test_labels = get_train_test(df, testSize=0.5)
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
@@ -47,10 +47,13 @@ else:
     model_predictions, model_scores = QKE_model.test(test_data, train_data)
 
 #update dataframe with prediction column
-test_data.insert(np.shape(test_data)[1], 'predictedLables', model_predictions)
+test_data.insert(np.shape(test_data)[1], 'predictedLabels', model_predictions)
 test_data.insert(np.shape(test_data)[1], 'trueLables', test_labels)
 test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
-##save resulting dataframe
+
+#save resulting dataframe
+test_data.to_pickle('output/test_data.pkl')
+
 #results = test_data_in_region.to_numpy()
 #tracklet_type = config['tracklet_dataset']
 #if config['classical']:
