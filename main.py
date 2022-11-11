@@ -42,13 +42,14 @@ else:
     
 #test
 if config['classical']:
-    model_predictions = QKE_model.test(test_data)
+    model_predictions, model_scores = QKE_model.test(test_data)
 else:
-    model_predictions = QKE_model.test(test_data, train_data)
+    model_predictions, model_scores = QKE_model.test(test_data, train_data)
 
 #update dataframe with prediction column
-test_data.insert(np.shape(test_data)[1], 'prediction', model_predictions)
-
+test_data.insert(np.shape(test_data)[1], 'predictedLables', model_predictions)
+test_data.insert(np.shape(test_data)[1], 'trueLables', test_labels)
+test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
 ##save resulting dataframe
 #results = test_data_in_region.to_numpy()
 #tracklet_type = config['tracklet_dataset']

@@ -107,7 +107,7 @@ class QKE_SVC():
         Train_data needs to be passed again when using quantum kernel.
         """
         if self.classical:
-            return self.model.predict(test_data)
+            return self.model.predict(test_data), self.model.decision_function(test_data)
         else:
             test_matrix = self.kernel.evaluate(x_vec = test_data, y_vec = train_data) 
-            return self.model.predict(test_matrix)
+            return self.model.predict(test_matrix), self.model.decision_function(test_matrix)
