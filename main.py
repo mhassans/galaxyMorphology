@@ -5,8 +5,8 @@ from QKE_SVC import QKE_SVC
 from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data
 
 config, config_filename = load_config(parse_args().config)
-df = prepare_dataframe(sample_size=100)
-train_data, train_labels, test_data, test_labels = get_train_test(df)
+df = prepare_dataframe(TrainPlusTestSize=100)
+train_data, train_labels, test_data, test_labels = get_train_test(df, testSize=0.5)
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
 
@@ -52,8 +52,6 @@ test_data.insert(np.shape(test_data)[1], 'prediction', model_predictions)
 ##save resulting dataframe
 #results = test_data_in_region.to_numpy()
 #tracklet_type = config['tracklet_dataset']
-#if isinstance(config['add_to_tracklet'], list):
-#    tracklet_type = 'with_physics_'+tracklet_type
 #if config['classical']:
 #    tracklet_type = 'classical_'+tracklet_type
 #results_file = tracklet_type+'_predictions_'+str(config['num_train'])+'_'+str(config['num_test'])+'_events_reg_'+str(config['region_id'])+'_in_'+str(config['division'])
