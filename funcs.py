@@ -45,3 +45,7 @@ def get_train_test(df, testSetSize):
 def normalize_data(df):
     return ((df-df.min())/(df.max()-df.min()))
 
+def makeOutputFileName(config_filename, classical, trainSize):
+    config_filename = config_filename + '_Class' if classical else config_filename + '_Quant'
+    config_filename = config_filename +'_trainSize' + str(int(trainSize))
+    return config_filename

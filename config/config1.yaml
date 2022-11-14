@@ -34,7 +34,7 @@ single_mapping: 1
 pair_mapping: 1
 interaction: YY
 circuit_width: 6
-trainPlusTestSize: 50
+trainPlusTestSize: 100
 testSetSize: 0.5
 modelSavedPath: 'trainedModels/'
 resultOutputPath: 'output/'

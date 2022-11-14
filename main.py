@@ -2,10 +2,14 @@ import joblib
 import numpy as np
 import pandas as pd
 from QKE_SVC import QKE_SVC
-from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data
+from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data, makeOutputFileName
 from pathlib import Path
 
 config, config_filename = load_config(parse_args().config)
+config_filename = makeOutputFileName(config_filename, 
+                                     config['classical'], 
+                                     config['trainPlusTestSize']*(1-config['testSetSize']))
+
 df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
 train_data, train_labels, test_data, test_labels = get_train_test(df, testSetSize=config['testSetSize'])
 train_data = normalize_data(train_data)
