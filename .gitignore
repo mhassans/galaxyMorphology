@@ -1,7 +1,6 @@
 data/GalaxyZoo1/GalaxyZoo1_DR_table2.csv
 data/features/Barchi19_Morph-catalog_670k-galaxies.csv
 .ipynb_checkpoints/
-*.ipynb
 */__pycache__/
 __pycache__/
 *.pkl
