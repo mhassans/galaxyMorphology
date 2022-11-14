@@ -3,20 +3,6 @@
 #arguments definitions
 ######################
 #load_model: boolean, should an SVM model be loaded (otherwise needs to be trained)
-#if load_model: True, ignored otherwise:
-#    model_file: str, path to model file
-
-#tracklet_dataset: str, which dataset is to be classified
-#    check load_events.py for options
-#division: how to divide the detector up
-#    check ./find_detector_region.py for options
-#region_id: str, options depend on division chosen
-#data_scaler: str, how to scale data
-#    check data_transform in ./main.py fo options
-#add_to_tracklet: list or None, which properties are to be added to data features
-#    check add_physics_to_tracklet in ./main.py for options
-#num_test: int, how many events to test on
-#num_train: int, how many events to train on (or how many were used if load_model: True)
 #class_weight: dict, what weights are to be applied to each of the two classes
 #classical: boolean, is kernel estimated classically
 #if classical: True, ignored otherwise:
@@ -31,17 +17,11 @@
 #        check ../quantum_circuit/param_U_gate.py for options
 #    interaction: str, what two-qubit gate to use
 #        check ../quantum_circuit/param_U_gate.py for options
+#trainPlusTestSize: the size of dataset which will be split into train and test sets.
+#testSetSize: in (0,1) interval; fraction of dataset used as test set.
 ######################
 
 load_model: False
-model_file: model_from_config1.sav
-#tracklet_dataset: triplet
-#division: new_phi
-#region_id: '0'
-data_scaler: global
-add_to_tracklet: null
-num_test: 1
-num_train: 1
 class_weight: 
   0: 1.0
   1: 1.0
@@ -54,3 +34,6 @@ single_mapping: 1
 pair_mapping: 1
 interaction: YY
 circuit_width: 6
+trainPlusTestSize: 50
+testSetSize: 0.5
+modelSavedPath: 'trainedModels/'

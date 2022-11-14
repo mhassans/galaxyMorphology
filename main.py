@@ -5,8 +5,8 @@ from QKE_SVC import QKE_SVC
 from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data
 
 config, config_filename = load_config(parse_args().config)
-df = prepare_dataframe(TrainPlusTestSize=1000)
-train_data, train_labels, test_data, test_labels = get_train_test(df, testSize=0.5)
+df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
+train_data, train_labels, test_data, test_labels = get_train_test(df, testSetSize=config['testSetSize'])
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
 
@@ -15,8 +15,11 @@ if not (config['circuit_width'] == n_features):
     raise AssertionError('Number of feautures is: ', n_features, '.',
     ' Feature dimension expected: ', config['circuit_width'],'.')
 
+modelSavedPath = config['modelSavedPath']
+
 QKE_model = QKE_SVC(config['classical'], 
                     config['class_weight'], 
+                    modelSavedPath = modelSavedPath,
                     gamma = config['gamma'],
                     C_class = config['C_class'],
                     alpha = config['alpha'],
@@ -36,7 +39,7 @@ if config['load_model'] == False:
                        )
 else:
     #load_model
-    model = joblib.load(config['model_file'])
+    model = joblib.load(modelSavedPath+'/model_from_'+config_filename+'.sav')
     QKE_model.set_model(load = True, model = model)
 
     

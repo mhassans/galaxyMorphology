@@ -7,6 +7,7 @@ STATUS: in dev, job report could be compiled in main
 import numpy as np
 import sys
 import os
+from pathlib import Path
 
 from sklearn.svm import SVC
 import joblib
@@ -34,6 +35,7 @@ class QKE_SVC():
     def __init__(self,
     classical,
     class_weight, 
+    modelSavedPath,
     gamma = None, 
     C_class = None, 
     alpha = None,
@@ -66,6 +68,7 @@ class QKE_SVC():
             self.kernel = QuantumKernel(feature_map = tracklet_feature_map, quantum_instance = self.backend)
         self.classical = classical
         self.class_weight = class_weight
+        self.modelSavedPath = modelSavedPath
         self.cache_chosen = 1000
 
     def train_model(self, train_data, train_labels, from_config):
@@ -78,7 +81,7 @@ class QKE_SVC():
             gamma = self.gamma,
             C = self.C_class,
             cache_size = self.cache_chosen,
-            class_weight = self.class_weight)
+            class_weight = self.class_weight) #TODO: Try 'balanced'?
 
             model.fit(train_data, train_labels)
         else:
@@ -91,8 +94,10 @@ class QKE_SVC():
             model.fit(train_matrix, train_labels)
         #save fitted SVC model
         filename = 'model_from_'+from_config+'.sav'
+        if not Path(self.modelSavedPath).exists():
+            Path(self.modelSavedPath).mkdir(parents=True)
         print('SVC model trained and stored as:', filename)
-        joblib.dump(model, filename)
+        joblib.dump(model, self.modelSavedPath + filename)
         return model
 
     def set_model(self, load, model = None, train_data = None, train_labels = None, from_config = None):
