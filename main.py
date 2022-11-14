@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from QKE_SVC import QKE_SVC
 from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data
+from pathlib import Path
 
 config, config_filename = load_config(parse_args().config)
 df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
@@ -16,6 +17,7 @@ if not (config['circuit_width'] == n_features):
     ' Feature dimension expected: ', config['circuit_width'],'.')
 
 modelSavedPath = config['modelSavedPath']
+resultOutputPath = config['resultOutputPath']
 
 QKE_model = QKE_SVC(config['classical'], 
                     config['class_weight'], 
@@ -55,7 +57,9 @@ test_data.insert(np.shape(test_data)[1], 'trueLables', test_labels)
 test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
 
 #save resulting dataframe
-test_data.to_pickle('output/test_data.pkl')
+if not Path(resultOutputPath).exists():
+    Path(resultOutputPath).mkdir(parents=True)
+test_data.to_pickle(resultOutputPath + '/test_data.pkl')
 
 #results = test_data_in_region.to_numpy()
 #tracklet_type = config['tracklet_dataset']
