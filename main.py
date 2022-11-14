@@ -59,7 +59,9 @@ test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
 #save resulting dataframe
 if not Path(resultOutputPath).exists():
     Path(resultOutputPath).mkdir(parents=True)
-test_data.to_pickle(resultOutputPath + '/result_from_'+config_filename+'.pkl')
+resultDataName = resultOutputPath + '/result_from_'+config_filename+'.pkl'
+test_data.to_pickle(resultDataName)
+print('result from applying the SVC model to the test set stored as:', resultDataName)
 
 #results = test_data_in_region.to_numpy()
 #tracklet_type = config['tracklet_dataset']

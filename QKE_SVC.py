@@ -93,11 +93,11 @@ class QKE_SVC():
             train_matrix = self.kernel.evaluate(x_vec = train_data)
             model.fit(train_matrix, train_labels)
         #save fitted SVC model
-        filename = 'model_from_'+from_config+'.sav'
+        filename = self.modelSavedPath + '/model_from_'+from_config+'.sav'
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
+        joblib.dump(model, filename)
         print('SVC model trained and stored as:', filename)
-        joblib.dump(model, self.modelSavedPath + filename)
         return model
 
     def set_model(self, load, model = None, train_data = None, train_labels = None, from_config = None):
