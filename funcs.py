@@ -10,8 +10,7 @@ def load_config(file_path = None):
     path = Path(file_path)
     with open(path, 'r') as file:
         cfg = yaml.load(file, Loader = yaml.FullLoader)
-    #returns the model and the name of the config run
-    return cfg, path.stem
+    return cfg
 
 def parse_args():
     parser = argparse.ArgumentParser(description = 'Load config file for SVM classification.')
@@ -45,7 +44,7 @@ def get_train_test(df, testSetSize):
 def normalize_data(df):
     return ((df-df.min())/(df.max()-df.min()))
 
-def makeOutputFileName(config_filename, classical, trainSize):
-    config_filename = config_filename + '_Class' if classical else config_filename + '_Quant'
-    config_filename = config_filename +'_trainSize' + str(int(trainSize))
-    return config_filename
+def makeOutputFileName(classical, trainSize):
+    fileName = 'Class' if classical else 'Quant'
+    fileName = fileName +'_trainSize' + str(int(trainSize))
+    return fileName
