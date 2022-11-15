@@ -41,7 +41,7 @@ if config['load_model'] == False:
     QKE_model.set_model(load = False, 
                         train_data = train_data,
                         train_labels = train_labels, 
-                        from_config = fileName
+                        fileName = fileName
                        )
 else:
     #load_model
