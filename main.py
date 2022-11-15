@@ -45,7 +45,9 @@ if config['load_model'] == False:
                        )
 else:
     #load_model
-    model = joblib.load(modelSavedPath+'/model_from_'+config_filename+'.sav')
+    modelName = modelSavedPath+'/model_from_'+config_filename+'.sav'
+    model = joblib.load(modelName)
+    print('Model ' + modelName + ' loaded!')
     QKE_model.set_model(load = True, model = model)
 
     

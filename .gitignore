@@ -5,3 +5,6 @@ data/features/Barchi19_Morph-catalog_670k-galaxies.csv
 __pycache__/
 *.pkl
 *.sav
+log/*
+glxMorph.sh
+config/config*
