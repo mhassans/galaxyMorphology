@@ -5,10 +5,10 @@ from QKE_SVC import QKE_SVC
 from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data, makeOutputFileName
 from pathlib import Path
 
-config, config_filename = load_config(parse_args().config)
-config_filename = makeOutputFileName(config_filename, 
-                                     config['classical'], 
-                                     config['trainPlusTestSize']*(1-config['testSetSize']))
+config = load_config(parse_args().config)
+fileName = makeOutputFileName(config['classical'],
+                              config['trainPlusTestSize']*(1-config['testSetSize'])
+                             )
 
 df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
 train_data, train_labels, test_data, test_labels = get_train_test(df, testSetSize=config['testSetSize'])
@@ -41,11 +41,11 @@ if config['load_model'] == False:
     QKE_model.set_model(load = False, 
                         train_data = train_data,
                         train_labels = train_labels, 
-                        from_config = config_filename
+                        from_config = fileName
                        )
 else:
     #load_model
-    modelName = modelSavedPath+'/model_from_'+config_filename+'.sav'
+    modelName = modelSavedPath+'/model_'+fileName+'.sav'
     model = joblib.load(modelName)
     print('Model ' + modelName + ' loaded!')
     QKE_model.set_model(load = True, model = model)
@@ -65,7 +65,7 @@ test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
 #save resulting dataframe
 if not Path(resultOutputPath).exists():
     Path(resultOutputPath).mkdir(parents=True)
-resultDataName = resultOutputPath + '/result_from_'+config_filename+'.pkl'
+resultDataName = resultOutputPath + '/result_'+fileName+'.pkl'
 test_data.to_pickle(resultDataName)
 print('Result from applying the SVC model to the test set stored as:', resultDataName)
 

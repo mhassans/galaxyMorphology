@@ -71,7 +71,7 @@ class QKE_SVC():
         self.modelSavedPath = modelSavedPath
         self.cache_chosen = 1000
 
-    def train_model(self, train_data, train_labels, from_config):
+    def train_model(self, train_data, train_labels, fileName):
         """
         When using a precomputed kernel fit and predict differ.
         Thus classical an quantum implementations differ.
@@ -93,19 +93,19 @@ class QKE_SVC():
             train_matrix = self.kernel.evaluate(x_vec = train_data)
             model.fit(train_matrix, train_labels)
         #save fitted SVC model
-        filename = self.modelSavedPath + '/model_from_'+from_config+'.sav'
+        filename = self.modelSavedPath + '/model_'+fileName+'.sav'
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
         joblib.dump(model, filename)
         print('SVC model trained and stored as:', filename)
         return model
 
-    def set_model(self, load, model = None, train_data = None, train_labels = None, from_config = None):
+    def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None):
         if load:
             self.model = model
             print('model has been loaded, model: ', self.model)
         else:
-            self.model = self.train_model(train_data = train_data, train_labels = train_labels, from_config = from_config)
+            self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName)
 
     def test(self, test_data, train_data = None):
         """
