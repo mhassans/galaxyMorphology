@@ -30,7 +30,7 @@ def double_roc(df1, title1, df2, title2):
     plt.ylim([0.0, 1.05])
     plt.xlabel("False Positive Rate")
     plt.ylabel("True Positive Rate")
-    plt.title('Classical vs Quantum')
+    plt.title('')
     plt.legend(loc="lower right")
     plt.show()    
     
