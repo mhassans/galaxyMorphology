@@ -179,3 +179,4 @@ def plot_confusion_matrix(y_true, y_pred, normalize_by_yTrue=False, normalize_by
     #plt.rcParams.update({'font.size': 14})
     plt.ylabel(yTitle)
     plt.xlabel(xTitle)
+    plt.clim(0,1)
