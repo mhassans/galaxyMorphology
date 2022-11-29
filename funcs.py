@@ -18,6 +18,17 @@ def parse_args():
 
     return parser.parse_args()
 
+def fix_ttype_feature(df, Ndigit=5):
+    """
+    TType is a mix of float and string. It also has a few values with '-' between digits, e.g. '5.292892456050-05'.
+    This example could mean 5.29^+5, which is far from the range of other values! So such values are discarded here;
+    i.e. TTypes with '-' in the last Ndigit are discarded.
+    """
+    df = df.astype({'TType': 'str'})
+    df = df[~(df['TType'].str.find('-',-1*Ndigit)!=-1)] # remove TTypes with '-' in the last Ndigit
+    df = df.astype({'TType': 'float'})
+    return df
+
 def prepare_dataframe(trainPlusTestSize):
     GZ1 = pd.read_csv('data/GalaxyZoo1/GZ1.csv') #Galaxy zoo data from data.galaxyzoo.org (unwanted columns removed)
     features = pd.read_csv('data/features/features.csv') 
@@ -28,7 +39,8 @@ def prepare_dataframe(trainPlusTestSize):
     df = df[df.UNCERTAIN==0].drop(columns=['UNCERTAIN']) #remove Uncertain category, i.e. not elliptical nor spiral
     df = df[df.Error==0] #Keep successful CyMorph processes only. See kaggle.com/datasets/saurabhshahane/galaxy-classification
     df = df[(df['G2']>-6000) & (df['S']>-6000) & (df['A']>-6000) & (df['C']>-6000)] #discard outliers
-    df = df.drop(['Error', 'TType'], axis=1) # ttype is a mix of str and float; discarded for now (needs convert to float)
+    df = df.drop(['Error'], axis=1) 
+    df = fix_ttype_feature(df)
     df = df.sample(n=trainPlusTestSize, random_state=33)
     df = df.reset_index(drop=True)
     return df

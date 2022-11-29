@@ -33,7 +33,7 @@ C_quant: 1.0e+6
 single_mapping: 1
 pair_mapping: 1
 interaction: YY
-circuit_width: 6
+circuit_width: 7
 trainPlusTestSize: 100
 testSetSize: 0.5
 modelSavedPath: 'trainedModels/'
