@@ -85,13 +85,14 @@ class QKE_SVC():
 
             model.fit(train_data, train_labels)
         else:
-            model = SVC(kernel = 'precomputed',
+            model = SVC(kernel = self.kernel.evaluate,
             C = self.C_quant,
             cache_size = self.cache_chosen,
             class_weight = self.class_weight)
     
-            train_matrix = self.kernel.evaluate(x_vec = train_data)
-            model.fit(train_matrix, train_labels)
+            model.fit(train_data, train_labels)
+            #train_matrix = self.kernel.evaluate(x_vec = train_data)
+            #model.fit(train_matrix, train_labels)
         #save fitted SVC model
         filename = self.modelSavedPath + '/model_'+fileName+'.sav'
         if not Path(self.modelSavedPath).exists():
@@ -111,8 +112,8 @@ class QKE_SVC():
         """
         Train_data needs to be passed again when using quantum kernel.
         """
-        if self.classical:
-            return self.model.predict(test_data), self.model.decision_function(test_data)
-        else:
-            test_matrix = self.kernel.evaluate(x_vec = test_data, y_vec = train_data) 
-            return self.model.predict(test_matrix), self.model.decision_function(test_matrix)
+        #if self.classical:
+        return self.model.predict(test_data), self.model.decision_function(test_data)
+        #else:
+        #    test_matrix = self.kernel.evaluate(x_vec = test_data, y_vec = train_data) 
+        #    return self.model.predict(test_matrix), self.model.decision_function(test_matrix)

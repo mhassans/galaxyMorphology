@@ -46,7 +46,7 @@ def prepare_dataframe(trainPlusTestSize):
     return df
 
 def get_train_test(df, testSetSize):
-    train, test = train_test_split(df, test_size=testSetSize)
+    train, test = train_test_split(df, test_size=testSetSize, random_state=42)
     train_data = train.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
     train_labels = train['SPIRAL']
     test_data = test.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
