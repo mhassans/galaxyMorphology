@@ -63,9 +63,9 @@ class QKE_SVC():
             pair_mapping = self.pair_mapping, 
             interaction = self.interaction, 
             alpha = self.alpha) 
-            tracklet_feature_map = param_feature_map.feature_map(circuit_width, U_gate)
+            featureMap = param_feature_map.feature_map(circuit_width, U_gate)
 
-            self.kernel = QuantumKernel(feature_map = tracklet_feature_map, quantum_instance = self.backend)
+            self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
         self.classical = classical
         self.class_weight = class_weight
         self.modelSavedPath = modelSavedPath
