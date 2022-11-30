@@ -48,10 +48,10 @@ def prepare_dataframe(trainPlusTestSize):
 def get_train_test(df, testSetSize):
     train, test = train_test_split(df, test_size=testSetSize, random_state=42)
     train_data = train.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
-    train_labels = train['SPIRAL']
+    train_labels_mtx = train[['ELLIPTICAL','SPIRAL']]
     test_data = test.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
-    test_labels = test['SPIRAL']
-    return train_data, train_labels, test_data, test_labels
+    test_labels_mtx = test[['ELLIPTICAL','SPIRAL']]
+    return train_data, train_labels_mtx, test_data, test_labels_mtx
 
 def normalize_data(df):
     return ((df-df.min())/(df.max()-df.min()))

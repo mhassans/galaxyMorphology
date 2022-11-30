@@ -4,6 +4,8 @@ import pandas as pd
 from QKE_SVC import QKE_SVC
 from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data, makeOutputFileName
 from pathlib import Path
+from sklearn.preprocessing import LabelBinarizer
+import code
 
 config = load_config(parse_args().config)
 fileName = makeOutputFileName(config['classical'],
@@ -11,9 +13,14 @@ fileName = makeOutputFileName(config['classical'],
                              )
 
 df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
-train_data, train_labels, test_data, test_labels = get_train_test(df, testSetSize=config['testSetSize'])
+train_data, train_labels_mtx, test_data, test_labels_mtx = get_train_test(df, testSetSize=config['testSetSize'])
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
+classes = [0, 1]
+lb = LabelBinarizer()
+lb.fit(classes)
+train_labels = lb.inverse_transform(train_labels_mtx)
+test_labels = lb.inverse_transform(test_labels_mtx)
 
 n_features = np.shape(train_data)[1]
 if not (config['circuit_width'] == n_features):
@@ -61,6 +68,8 @@ else:
 test_data.insert(np.shape(test_data)[1], 'predictedLabels', model_predictions)
 test_data.insert(np.shape(test_data)[1], 'trueLabels', test_labels)
 test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
+test_data = pd.concat([test_data, test_labels_mtx], axis=1)
+code.interact(local=locals())
 
 #save resulting dataframe
 if not Path(resultOutputPath).exists():
