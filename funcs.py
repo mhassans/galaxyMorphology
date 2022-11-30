@@ -36,7 +36,7 @@ def prepare_dataframe(trainPlusTestSize):
     features = features.rename(columns={'dr7objid':'OBJID'})
     features = features.drop_duplicates()
     df = pd.merge(features, GZ1, on='OBJID', how='inner')
-    df = df[df.UNCERTAIN==0].drop(columns=['UNCERTAIN']) #remove Uncertain category, i.e. not elliptical nor spiral
+    #df = df[df.UNCERTAIN==0].drop(columns=['UNCERTAIN']) #remove Uncertain category, i.e. not elliptical nor spiral
     df = df[df.Error==0] #Keep successful CyMorph processes only. See kaggle.com/datasets/saurabhshahane/galaxy-classification
     df = df[(df['G2']>-6000) & (df['S']>-6000) & (df['A']>-6000) & (df['C']>-6000)] #discard outliers
     df = df.drop(['Error'], axis=1) 
@@ -45,12 +45,12 @@ def prepare_dataframe(trainPlusTestSize):
     df = df.reset_index(drop=True)
     return df
 
-def get_train_test(df, testSetSize):
+def get_train_test(df, trueLabels, testSetSize):
     train, test = train_test_split(df, test_size=testSetSize, random_state=42)
-    train_data = train.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
-    train_labels_mtx = train[['ELLIPTICAL','SPIRAL']]
-    test_data = test.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
-    test_labels_mtx = test[['ELLIPTICAL','SPIRAL']]
+    train_data = train.drop(['OBJID']+trueLabels, axis=1)
+    train_labels_mtx = train[trueLabels]
+    test_data = test.drop(['OBJID']+trueLabels, axis=1)
+    test_labels_mtx = test[trueLabels]
     return train_data, train_labels_mtx, test_data, test_labels_mtx
 
 def normalize_data(df):
