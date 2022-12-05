@@ -102,5 +102,5 @@ class QKE_SVC():
         else:
             self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName)
 
-    def test(self, test_data, train_data = None):
+    def test(self, test_data):
         return self.model.predict(test_data), self.model.decision_function(test_data)

@@ -52,10 +52,7 @@ else:
 
     
 #test
-if config['classical']:
-    model_predictions, model_scores = QKE_model.test(test_data)
-else:
-    model_predictions, model_scores = QKE_model.test(test_data, train_data)
+model_predictions, model_scores = QKE_model.test(test_data)
 
 #update dataframe with prediction column
 test_data.insert(np.shape(test_data)[1], 'predictedLabels', model_predictions)
