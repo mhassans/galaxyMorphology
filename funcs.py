@@ -60,3 +60,34 @@ def makeOutputFileName(classical, trainSize):
     fileName = 'Class' if classical else 'Quant'
     fileName = fileName +'_trainSize' + str(int(trainSize))
     return fileName
+
+def produceConfig(config, fileName):
+    filePath = 'config/autoConfigs_'+fileName+'.yaml'
+    with open(filePath, 'w') as outfile:
+        yaml.dump(config, outfile, default_flow_style=False)
+    return filePath
+
+def getConfigName(config):
+    fileName = ''
+    if config['classical']:
+        fileName = 'Class'
+        fileName += '-C' + str(config['C_class']).replace('.','p')
+        fileName += '-gamma' + str(config['gamma']).replace('.','p')
+    else:
+        fileName = 'Quant'
+        fileName += '-alpha' + str(config['alpha']).replace('.','p')
+        fileName += '-C' + str(config['C_quant']).replace('.','p')
+        fileName += '-singleMap' + str(config['single_mapping'])
+        fileName += '-pairMap' + str(config['pair_mapping'])
+        fileName += '-interaction' + config['interaction']
+    
+    fileName += '-weight'
+    if (config['class_weight'] == None):
+        fileName += 'None'
+    elif (config['class_weight'] == 'balanced'):
+        fileName += 'Balanced'
+    else:
+        print('ERROR: You need to change this part of the code to handle the file name when weights are other than None or balanced.')
+        sys.exit(1)
+    fileName += '-trainSizeADDTRAINSIZE' #+ str(int(trainSize))
+    return fileName
