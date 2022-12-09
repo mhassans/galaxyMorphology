@@ -1,3 +1,5 @@
+import time
+start_time = time.time()
 import joblib
 import numpy as np
 import pandas as pd
@@ -65,6 +67,9 @@ if not Path(resultOutputPath).exists():
 resultDataName = resultOutputPath + '/result_'+fileName+'.pkl'
 test_data.to_pickle(resultDataName)
 print('Result from applying the SVC model to the test set stored as:', resultDataName)
+
+elapsed_time = time.time() - start_time
+print "elapsed time=", elapsed_time
 
 #results = test_data_in_region.to_numpy()
 #tracklet_type = config['tracklet_dataset']

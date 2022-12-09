@@ -4,12 +4,12 @@ from funcs import produceConfig, getConfigName
 
 
 def main():
-    os.system('rm config/autoConfigs_*') #remove previous configs to ensure new configs are used
+    #os.system('rm config/autoConfigs_*') #remove previous configs to ensure new configs are used
     
     #initialize config
     config = dict(
         load_model = False,
-        class_weight = None,
+        class_weight = 'balanced',
         classical = False,
         gamma = 1,
         C_class = 1.0e+6,
@@ -29,7 +29,8 @@ def main():
         config['classical'] = clfType
         fileName = getConfigName(config)
         filePath = produceConfig(config, fileName)
-        os.system('python main.py '+ filePath)
+        os.system('qsub -v input="' + filePath + '" glxMorph.sh')
+        #os.system('python main.py '+ filePath)
 
 if __name__ == "__main__":
     main()
