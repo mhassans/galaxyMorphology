@@ -69,12 +69,4 @@ test_data.to_pickle(resultDataName)
 print('Result from applying the SVC model to the test set stored as:', resultDataName)
 
 elapsed_time = time.time() - start_time
-print "elapsed time=", elapsed_time
-
-#results = test_data_in_region.to_numpy()
-#tracklet_type = config['tracklet_dataset']
-#if config['classical']:
-#    tracklet_type = 'classical_'+tracklet_type
-#results_file = tracklet_type+'_predictions_'+str(config['num_train'])+'_'+str(config['num_test'])+'_events_reg_'+str(config['region_id'])+'_in_'+str(config['division'])
-#
-#np.save(results_file, results)
+print("elapsed time=", elapsed_time)

@@ -78,14 +78,12 @@ class QKE_SVC():
             C = self.C_class,
             cache_size = self.cache_chosen,
             class_weight = self.class_weight) #TODO: Try 'balanced'?
-
             model.fit(train_data, train_labels)
         else:
             model = SVC(kernel = self.kernel.evaluate,
             C = self.C_quant,
             cache_size = self.cache_chosen,
             class_weight = self.class_weight)
-    
             model.fit(train_data, train_labels)
         #save fitted SVC model
         filename = self.modelSavedPath + '/model_'+fileName+'.sav'
