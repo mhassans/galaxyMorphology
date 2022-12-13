@@ -41,12 +41,19 @@ def prepare_dataframe(trainPlusTestSize):
     df = df[(df['G2']>-6000) & (df['S']>-6000) & (df['A']>-6000) & (df['C']>-6000)] #discard outliers
     df = df.drop(['Error'], axis=1) 
     df = fix_ttype_feature(df)
-    df = df.sample(n=trainPlusTestSize, random_state=33)
+    df = df.sample(n=trainPlusTestSize, random_state=1)
     df = df.reset_index(drop=True)
     return df
 
-def get_train_test(df, testSetSize):
-    train, test = train_test_split(df, test_size=testSetSize, random_state=42)
+def get_train_test(df, n_splits=5, fold_idx=0):
+    if fold_idx>=n_splits:
+        print("ERROR: Fold index must be between 0 and n_splits-1.")
+        sys.exit(1)
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=1)
+    indices = list(kf.split(df))
+    train_id, test_id = indices[fold_idx]
+    train = df.iloc[train_id]
+    test = df.iloc[test_id]
     train_data = train.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
     train_labels = train['SPIRAL']
     test_data = test.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
