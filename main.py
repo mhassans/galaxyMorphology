@@ -1,22 +1,41 @@
 import time
 start_time = time.time()
+print('1')
 import joblib
+print('12')
 import numpy as np
+print('13')
 import pandas as pd
+print('14')
 from QKE_SVC import QKE_SVC
-from funcs import load_config, parse_args, prepare_dataframe, get_train_test, normalize_data, makeOutputFileName
+print('15')
+from funcs import prepare_dataframe, get_train_test, normalize_data, setConfigName
+print('16')
 from pathlib import Path
-
-config = load_config(parse_args().config)
-fileName = makeOutputFileName(config['classical'],
-                              config['trainPlusTestSize']*(1-config['testSetSize'])
-                             )
+print('17')
+import sys
+print('18')
+import yaml
+print('2')
+try:
+    config_file = sys.argv[1]
+except IndexError:
+    print("Please give a valid config file")
+    exit()
+try:
+    with open(config_file, 'r') as file:
+        config = yaml.load(file, Loader=yaml.FullLoader)
+except EnvironmentError:
+    print("Please give a valid config file")
+    exit()
+print('3')
+fileName = setConfigName(config)
 
 df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
-train_data, train_labels, test_data, test_labels = get_train_test(df, testSetSize=config['testSetSize'])
+train_data, train_labels, test_data, test_labels = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
-
+print('4')
 n_features = np.shape(train_data)[1]
 if not (config['circuit_width'] == n_features):
     raise AssertionError('Number of feautures is: ', n_features, '.',

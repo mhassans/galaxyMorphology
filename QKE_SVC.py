@@ -3,22 +3,34 @@ Use data provided to train and save an svm classifier
 Can use a classicla svm or quantum-enhanced
 STATUS: in dev, job report could be compiled in main
 """
-
+print('142')
 import numpy as np
+print('142')
 import sys
+print('143')
 import os
+print('144')
 from pathlib import Path
-
+print('145')
 from sklearn.svm import SVC
+print('146')
 import joblib
+print('147')
 
 from qiskit import (Aer,IBMQ)
+print('148')
 IBMQ.load_account()
+print('149')
 IBMQ.providers()
+print('1410')
 provider = IBMQ.get_provider(group='open')
+print('1411')
 from qiskit.utils import QuantumInstance
+print('1412')
 from qiskit.circuit import ParameterVector
+print('1413')
 from qiskit_machine_learning.kernels import QuantumKernel
+print('1414')
 
 path_for_imports = os.path.abspath('.')
 print(path_for_imports)

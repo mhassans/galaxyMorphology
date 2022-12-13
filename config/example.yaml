@@ -22,9 +22,7 @@
 ######################
 
 load_model: False
-class_weight: 
-  0: 1.0
-  1: 1.0
+class_weight: 'balanced'
 classical: False
 gamma: 1
 C_class: 1.0e+6
@@ -35,6 +33,7 @@ pair_mapping: 1
 interaction: YY
 circuit_width: 7
 trainPlusTestSize: 100
-testSetSize: 0.5
+n_splits: 5
+fold_idx: 0
 modelSavedPath: 'trainedModels/'
 resultOutputPath: 'output/'

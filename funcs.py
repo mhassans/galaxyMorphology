@@ -1,22 +1,20 @@
 import yaml
-import numpy as np
 import pandas as pd
-from sklearn.model_selection import train_test_split
-from pathlib import Path
-import argparse
+from sklearn.model_selection import KFold
+#from pathlib import Path
 
 
-def load_config(file_path = None):
-    path = Path(file_path)
-    with open(path, 'r') as file:
-        cfg = yaml.load(file, Loader = yaml.FullLoader)
-    return cfg
-
-def parse_args():
-    parser = argparse.ArgumentParser(description = 'Load config file for SVM classification.')
-    parser.add_argument('config', type = str, help = 'Path to config file.')
-
-    return parser.parse_args()
+#def load_config(file_path = None):
+#    path = Path(file_path)
+#    with open(path, 'r') as file:
+#        cfg = yaml.load(file, Loader = yaml.FullLoader)
+#    return cfg
+#
+#def parse_args():
+#    parser = argparse.ArgumentParser(description = 'Load config file for SVM classification.')
+#    parser.add_argument('config', type = str, help = 'Path to config file.')
+#
+#    return parser.parse_args()
 
 def fix_ttype_feature(df, Ndigit=5):
     """
@@ -48,7 +46,7 @@ def prepare_dataframe(trainPlusTestSize):
 def get_train_test(df, n_splits=5, fold_idx=0):
     if fold_idx>=n_splits:
         print("ERROR: Fold index must be between 0 and n_splits-1.")
-        sys.exit(1)
+        exit()
     kf = KFold(n_splits=n_splits, shuffle=True, random_state=1)
     indices = list(kf.split(df))
     train_id, test_id = indices[fold_idx]
@@ -74,7 +72,7 @@ def produceConfig(config, fileName):
         yaml.dump(config, outfile, default_flow_style=False)
     return filePath
 
-def getConfigName(config):
+def setConfigName(config):
     fileName = ''
     if config['classical']:
         fileName = 'Class'
@@ -95,6 +93,10 @@ def getConfigName(config):
         fileName += 'Balanced'
     else:
         print('ERROR: You need to change this part of the code to handle the file name when weights are other than None or balanced.')
-        sys.exit(1)
-    fileName += '-trainSizeADDTRAINSIZE' #+ str(int(trainSize))
+        exit()
+    testSetFraction = 1./config['n_splits']
+    trainSetFraction = 1 - testSetFraction
+    fileName += '-trainSize' + str(int(config['trainPlusTestSize']*trainSetFraction))
+    fileName += '-testSize' + str(int(config['trainPlusTestSize']*testSetFraction))
+    fileName += '-foldIdx' + str(config['fold_idx'])
     return fileName

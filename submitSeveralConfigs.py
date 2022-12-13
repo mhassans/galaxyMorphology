@@ -1,6 +1,6 @@
 import os
 import sys
-from funcs import produceConfig, getConfigName
+from funcs import produceConfig, setConfigName
 
 
 def main():
@@ -27,7 +27,7 @@ def main():
     
     for clfType in [True, False]:
         config['classical'] = clfType
-        fileName = getConfigName(config)
+        fileName = setConfigName(config)
         filePath = produceConfig(config, fileName)
         os.system('qsub -v input="' + filePath + '" glxMorph.sh')
         #os.system('python main.py '+ filePath)
