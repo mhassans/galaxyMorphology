@@ -70,6 +70,8 @@ def produceConfig(config, fileName):
     filePath = 'config/autoConfigs_'+fileName+'.yaml'
     with open(filePath, 'w') as outfile:
         yaml.dump(config, outfile, default_flow_style=False)
+    print('The following config file was produced:')
+    print(filePath)
     return filePath
 
 def setConfigName(config):

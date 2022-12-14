@@ -9,7 +9,7 @@ def main():
     #initialize config
     config = dict(
         load_model = False,
-        class_weight = 'balanced',
+        class_weight = None,
         classical = False,
         gamma = 1,
         C_class = 1.0e+6,
@@ -20,17 +20,18 @@ def main():
         interaction = 'YY',
         circuit_width = 7,
         trainPlusTestSize = 200,
-        testSetSize = 0.5,
+        n_splits = 5,
+        fold_idx = 0,
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/'
     )
     
-    for clfType in [True, False]:
+    for clfType in [True]:#, False]:
         config['classical'] = clfType
         fileName = setConfigName(config)
         filePath = produceConfig(config, fileName)
-        os.system('qsub -v input="' + filePath + '" glxMorph.sh')
-        #os.system('python main.py '+ filePath)
+        #os.system('qsub -v input="' + filePath + '" glxMorph.sh')
+        os.system('python main.py '+ filePath)
 
 if __name__ == "__main__":
     main()
