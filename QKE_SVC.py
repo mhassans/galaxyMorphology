@@ -31,9 +31,9 @@ from qiskit.circuit import ParameterVector
 print('1413')
 from qiskit_machine_learning.kernels import QuantumKernel
 print('1414')
-
+import time
 path_for_imports = os.path.abspath('.')
-print(path_for_imports)
+#print(path_for_imports)
 sys.path.append(path_for_imports) #for quantum_circuit
 from quantum_circuit import (param_feature_map, param_U_gate)
 
@@ -101,8 +101,10 @@ class QKE_SVC():
         filename = self.modelSavedPath + '/model_'+fileName+'.sav'
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
+        time0 = time.time()
         joblib.dump(model, filename)
         print('SVC model trained and stored as:', filename)
+        print("Storing model on disk took ", time.time()-time0," seconds")
         return model
 
     def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None):

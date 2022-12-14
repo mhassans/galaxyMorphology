@@ -4,6 +4,7 @@ print('1')
 import joblib
 print('12')
 import numpy as np
+from sklearn.metrics import roc_auc_score, f1_score, accuracy_score
 print('13')
 import pandas as pd
 print('14')
@@ -28,14 +29,12 @@ try:
 except EnvironmentError:
     print("Please give a valid config file")
     exit()
-print('3')
 fileName = setConfigName(config)
 
 df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
 train_data, train_labels, test_data, test_labels = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
-print('4')
 n_features = np.shape(train_data)[1]
 if not (config['circuit_width'] == n_features):
     raise AssertionError('Number of feautures is: ', n_features, '.',
@@ -57,6 +56,9 @@ QKE_model = QKE_SVC(config['classical'],
                     circuit_width = config['circuit_width']
                    )
 
+timeStampBeforeTraining = time.time()
+print("Time elapsed before training starts: ", timeStampBeforeTraining - start_time, " seconds.")
+
 if config['load_model'] == False:
     #train model
     QKE_model.set_model(load = False, 
@@ -71,14 +73,22 @@ else:
     print('Model ' + modelName + ' loaded!')
     QKE_model.set_model(load = True, model = model)
 
+timeStampAfterTrainingTime = time.time()
+print("Training took ", timeStampAfterTrainingTime - timeStampBeforeTraining, " seconds.")
     
 #test
 model_predictions, model_scores = QKE_model.test(test_data)
+
+timeStampAfterTesting = time.time()
+print("Applying model to test set took ", timeStampAfterTesting - timeStampAfterTrainingTime, " seconds.")
 
 #update dataframe with prediction column
 test_data.insert(np.shape(test_data)[1], 'predictedLabels', model_predictions)
 test_data.insert(np.shape(test_data)[1], 'trueLabels', test_labels)
 test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
+
+timeStampAfterAddCol = time.time()
+print("Adding results to dataframe took ", timeStampAfterAddCol - timeStampAfterTesting, " seconds.")
 
 #save resulting dataframe
 if not Path(resultOutputPath).exists():
@@ -86,6 +96,12 @@ if not Path(resultOutputPath).exists():
 resultDataName = resultOutputPath + '/result_'+fileName+'.pkl'
 test_data.to_pickle(resultDataName)
 print('Result from applying the SVC model to the test set stored as:', resultDataName)
+timeStampResultSaved = time.time()
+print("Saving results dataframe took ", timeStampResultSaved - timeStampAfterAddCol," seconds.")
 
 elapsed_time = time.time() - start_time
-print("elapsed time=", elapsed_time)
+print("Running the code took ", elapsed_time, " seconds.")
+print('######################################################')
+print('ROC AUC: ', roc_auc_score(test_data['trueLabels'], test_data['scores']))
+print('F1 score: ', f1_score(test_data['trueLabels'], test_data['predictedLabels']))
+print('Accuracy: ', accuracy_score(test_data['trueLabels'], test_data['predictedLabels']))
