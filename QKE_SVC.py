@@ -3,25 +3,37 @@ Use data provided to train and save an svm classifier
 Can use a classicla svm or quantum-enhanced
 STATUS: in dev, job report could be compiled in main
 """
-
+print('142')
 import numpy as np
+print('142')
 import sys
+print('143')
 import os
+print('144')
 from pathlib import Path
-
+print('145')
 from sklearn.svm import SVC
+print('146')
 import joblib
+print('147')
 
 from qiskit import (Aer,IBMQ)
+print('148')
 IBMQ.load_account()
+print('149')
 IBMQ.providers()
+print('1410')
 provider = IBMQ.get_provider(group='open')
+print('1411')
 from qiskit.utils import QuantumInstance
+print('1412')
 from qiskit.circuit import ParameterVector
+print('1413')
 from qiskit_machine_learning.kernels import QuantumKernel
-
+print('1414')
+import time
 path_for_imports = os.path.abspath('.')
-print(path_for_imports)
+#print(path_for_imports)
 sys.path.append(path_for_imports) #for quantum_circuit
 from quantum_circuit import (param_feature_map, param_U_gate)
 
@@ -78,21 +90,21 @@ class QKE_SVC():
             C = self.C_class,
             cache_size = self.cache_chosen,
             class_weight = self.class_weight) #TODO: Try 'balanced'?
-
             model.fit(train_data, train_labels)
         else:
             model = SVC(kernel = self.kernel.evaluate,
             C = self.C_quant,
             cache_size = self.cache_chosen,
             class_weight = self.class_weight)
-    
             model.fit(train_data, train_labels)
         #save fitted SVC model
         filename = self.modelSavedPath + '/model_'+fileName+'.sav'
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
+        time0 = time.time()
         joblib.dump(model, filename)
         print('SVC model trained and stored as:', filename)
+        print("Storing model on disk took ", time.time()-time0," seconds")
         return model
 
     def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None):

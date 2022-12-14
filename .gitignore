@@ -8,3 +8,4 @@ __pycache__/
 log/*
 glxMorph.sh
 config/config*
+config/autoConfig*

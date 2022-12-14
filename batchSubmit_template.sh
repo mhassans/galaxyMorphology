@@ -1,12 +1,16 @@
 #usr/bin/bash
 
-#PBS -N nameOfTheJob
+#PBS -N glxMorph_17Nov
 
 #PBS -k o
 
 #PBS -j oe
 
-#PBS -t 3
+#PBS -t 1
+
+#PBS -q long
+
+#PBS -l mem=55gb
 
 module load dot
 source /home/myUserName/miniconda3/etc/profile.d/conda.sh
