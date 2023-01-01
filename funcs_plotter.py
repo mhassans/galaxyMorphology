@@ -54,30 +54,30 @@ def single_roc(df, title):
     plt.legend(loc="lower right")
     plt.show()
 
-def renameOutputFile(folder):
-    """
-    Remove config# from file names. Not currently used. Used for renaming several files.
-    """
-    oldNames = []
-    for file in os.listdir(folder):
-        if fnmatch.fnmatch(file, '*config*'):
-            oldNames.append(file)
-    newNames = {}
-    for oldName in oldNames:
-        newName = oldName[:oldName.index('config')]+oldName[oldName.index('config')+8:]
-        newNames[oldName] = newName
-    for oldName, newName in newNames.items():
-        os.rename(folder+oldName, folder+newName)
+#def renameOutputFile(folder):
+#    """
+#    Remove config# from file names. Not currently used. Used for renaming several files.
+#    """
+#    oldNames = []
+#    for file in os.listdir(folder):
+#        if fnmatch.fnmatch(file, '*config*'):
+#            oldNames.append(file)
+#    newNames = {}
+#    for oldName in oldNames:
+#        newName = oldName[:oldName.index('config')]+oldName[oldName.index('config')+8:]
+#        newNames[oldName] = newName
+#    for oldName, newName in newNames.items():
+#        os.rename(folder+oldName, folder+newName)
     
-def getDataset(outputPath, classical, trainSize):
-    """
-    classical (bool): False for quantum-enhanced model, and True for classical.
-    trainSize (int): train sample size
-    """
-    fileName = outputPath + '/' + 'result_'
-    fileName = fileName + 'Class_' if classical else fileName + 'Quant_'
-    fileName = fileName + 'trainSize' + str(trainSize) + '.pkl'
-    return  pd.read_pickle(fileName)
+#def getDataset(outputPath, classical, trainSize):
+#    """
+#    classical (bool): False for quantum-enhanced model, and True for classical.
+#    trainSize (int): train sample size
+#    """
+#    fileName = outputPath + '/' + 'result_'
+#    fileName = fileName + 'Class_' if classical else fileName + 'Quant_'
+#    fileName = fileName + 'trainSize' + str(trainSize) + '.pkl'
+#    return  pd.read_pickle(fileName)
 
 def getEfficiency(df):
     predictedAndTrueSize = len(df[(df['predictedLabels']==1)&(df['trueLabels']==1)])
