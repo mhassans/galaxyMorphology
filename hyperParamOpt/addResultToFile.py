@@ -52,16 +52,16 @@ for fileName in glob.glob('./jobsOutput/*.o*'):
         
         foldIdx = hypePars_splitted[6].replace("foldIdx", "").replace(".pkl", "")
         
-        print('c', const_C)
-        print('gamma', gamma)
-        print('weight', weight)
-        print('trainsize', trainSize)
-        print('testsize', testSize)
-        print('foldidx', foldIdx)
-        print('time', time)
-        print('roc', rocAUC)
-        print('f1', fOne)
-        print('accuracy', accuracy)
+        #print('c', const_C)
+        #print('gamma', gamma)
+        #print('weight', weight)
+        #print('trainsize', trainSize)
+        #print('testsize', testSize)
+        #print('foldidx', foldIdx)
+        #print('time', time)
+        #print('roc', rocAUC)
+        #print('f1', fOne)
+        #print('accuracy', accuracy)
 
         if (trainSize=='20000' and testSize=='5000'):
             indexOfnewData = ('RBF',const_C,gamma,weight)#Index in this order: kernel, C-Class, gamma, weight
@@ -71,7 +71,7 @@ for fileName in glob.glob('./jobsOutput/*.o*'):
                 "F1score-fold"+foldIdx: [fOne],
                 "Accuracy-fold"+foldIdx: [accuracy]
                 }, index=[indexOfnewData])
-            print('newData=', newData)
+            #print('newData=', newData)
             
             if indexOfnewData in df.index:
                 df.update(newData)
@@ -82,3 +82,5 @@ for fileName in glob.glob('./jobsOutput/*.o*'):
         else:
             print('TRAIN AND TEST SIZE NOT 20K AND 5K, RESPECTIVELY.')
     print('=========================================')
+
+
