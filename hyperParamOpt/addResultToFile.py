@@ -83,4 +83,4 @@ for fileName in glob.glob('./jobsOutput/*.o*'):
             print('TRAIN AND TEST SIZE NOT 20K AND 5K, RESPECTIVELY.')
     print('=========================================')
 
-
+df.to_csv("hyperParOptResults2.csv", index=True)
