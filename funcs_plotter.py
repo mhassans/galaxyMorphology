@@ -5,6 +5,7 @@ from sklearn.metrics import roc_curve, auc
 import sys
 from sklearn.metrics import confusion_matrix
 import itertools
+import seaborn as sns
 
 def double_roc(df1, title1, df2, title2):
     fpr1, tpr1, _ = roc_curve(df1['trueLabels'], df1['scores'])
@@ -180,3 +181,16 @@ def plot_confusion_matrix(y_true, y_pred, normalize_by_yTrue=False, normalize_by
     plt.ylabel(yTitle)
     plt.xlabel(xTitle)
     plt.clim(0,1)
+
+def scatterplotWithErrors(x, y, x_err, y_err, xlabel, ylabel):
+    fig, ax = plt.subplots()
+    ax.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    ax.set_xscale('log')
+    plt.show()
+
+def scatterplotColored(x, y, hue, data, palette, legendOutsideGraph=False):
+    sns.scatterplot(x=x, y=y, hue=hue, data=data, palette=palette)
+    if legendOutsideGraph:
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)

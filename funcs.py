@@ -1,4 +1,5 @@
 import yaml
+import ast
 import pandas as pd
 from sklearn.model_selection import KFold
 #from pathlib import Path
@@ -102,3 +103,31 @@ def setConfigName(config):
     fileName += '-testSize' + str(int(config['trainPlusTestSize']*testSetFraction))
     fileName += '-foldIdx' + str(config['fold_idx'])
     return fileName
+
+def addMeanAndStdDev(df):
+    """
+    Adds mean and std dev of metrics (roc, f1 score, and accuracy) and code run time as new df columns.
+    Adds index information (weight, kernel, etc.) as new df columns.
+    """
+    times = ["TimeToRun-fold{}".format(i) for i in range(5)]
+    rocAUCs = ["rocAUC-fold{}".format(i) for i in range(5)]
+    fOnes = ["F1score-fold{}".format(i) for i in range(5)]
+    accuracies = ["Accuracy-fold{}".format(i) for i in range(5)]
+
+    df["TimeToRun-mean"] = df[times].mean(axis=1)
+    df["TimeToRun-std"] = df[times].std(axis=1)
+    df["rocAUC-mean"] = df[rocAUCs].mean(axis=1)
+    df["rocAUC-std"] = df[rocAUCs].std(axis=1)
+    df["fOne-mean"] = df[fOnes].mean(axis=1)
+    df["fOne-std"] = df[fOnes].std(axis=1)
+    df["accuracy-mean"] = df[accuracies].mean(axis=1)
+    df["accuracy-std"] = df[accuracies].std(axis=1)
+    df['rocAUC-relError'] = df["rocAUC-std"]/df["rocAUC-mean"]
+    df['fOne-relError'] = df["fOne-std"]/df["fOne-mean"]
+    df['accuracy-relError'] = df["accuracy-std"]/df["accuracy-mean"]
+    #Add index to column. Example of index: "('RBF', '1000000.0', 'scale', 'None')"
+    df = df.assign(kernel = df.index.map(lambda x: str(ast.literal_eval(x)[0]))) #"ast" changes string back to tuple
+    df = df.assign(C_class = df.index.map(lambda x: float(ast.literal_eval(x)[1])))
+    df = df.assign(gamma = df.index.map(lambda x: str(ast.literal_eval(x)[2])))
+    df = df.assign(weight = df.index.map(lambda x: str(ast.literal_eval(x)[3])))
+    return df
