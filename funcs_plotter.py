@@ -190,7 +190,10 @@ def scatterplotWithErrors(x, y, x_err, y_err, xlabel, ylabel):
     ax.set_xscale('log')
     plt.show()
 
-def scatterplotColored(x, y, hue, data, palette, legendOutsideGraph=False):
+def scatterplotColored(x, y, hue, data, palette, legendOutsideGraph=False, loglog=False):
     sns.scatterplot(x=x, y=y, hue=hue, data=data, palette=palette)
     if legendOutsideGraph:
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    if loglog:
+        plt.xscale('log')
+        plt.yscale('log')
