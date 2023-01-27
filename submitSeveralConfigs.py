@@ -1,4 +1,4 @@
-import os
+import subprocess
 import sys
 from funcs import produceConfig, setConfigName
 
@@ -6,16 +6,23 @@ def run(config, submitToBatch):
     fileName = setConfigName(config)
     filePath = produceConfig(config, fileName)
     if (submitToBatch):
-        os.system('qsub -v input="' + filePath + '" glxMorph.sh')
+        subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
     else:
-        os.system('python main.py '+ filePath + '> log/' + fileName + '.out')
+        try:
+            with open('log/' + fileName + '.out', 'w') as f:
+                subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=200)
+        except subprocess.TimeoutExpired:
+            print('TOOK LONG TO RUN THE FOLLOWING FILE. TERMINATED. NEEDS BEING SUBMITTED TO THE BATCH:', fileName)
+            print('*************************************************************')
+            with open("longJobs.txt", "a") as file: #add the name of the terminated job to the end of this txt file.
+                file.write(fileName)
 
 def main(submitToBatch):
     #initialize config
     config = dict(
         load_model = False,
         class_weight = None,
-        classical = True,
+        classical = False,
         gamma = 'auto',
         C_class = 1.0e+6,
         alpha = 0.1,
@@ -30,14 +37,14 @@ def main(submitToBatch):
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/'
     )
-   
-    list_classical = [True, False]
-    list_class_weight = [None, 'balanced']
-    list_fold_idx = list(range(config['n_splits']))
+    #list of configs to iterate over 
+    list_classical = [False] #e.g. [True, False]
+    list_class_weight = [None] #e.g. [None, 'balanced']
+    list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
-    #Classic-only
-    list_C_class = [0.1, 1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7, 1.0e+8]
-    list_gamma = [1, 'scale', 'auto']
+    #Classical-only
+    list_C_class = [10] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
+    list_gamma = [1] #e.g. [0.1, 1, 'scale', 'auto']
     
     #Quantum-only
     list_alpha = [0.1]
@@ -73,5 +80,5 @@ def main(submitToBatch):
                                         run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = False
+    submitToBatch = True
     main(submitToBatch)
