@@ -39,7 +39,7 @@ def main(submitToBatch):
     )
     #list of configs to iterate over 
     list_classical = [False] #e.g. [True, False]
-    list_class_weight = [None] #e.g. [None, 'balanced']
+    list_weight = [None] #e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
     #Classical-only
@@ -55,7 +55,7 @@ def main(submitToBatch):
     
     for clfType in list_classical:
         config['classical'] = clfType
-        for weight in list_class_weight:
+        for weight in list_weight:
             config['class_weight'] = weight
             for foldID in list_fold_idx:
                 config['fold_idx'] = foldID
@@ -80,5 +80,5 @@ def main(submitToBatch):
                                         run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = True
+    submitToBatch = False
     main(submitToBatch)

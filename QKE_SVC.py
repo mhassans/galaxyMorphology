@@ -89,7 +89,7 @@ class QKE_SVC():
             gamma = self.gamma,
             C = self.C_class,
             cache_size = self.cache_chosen,
-            class_weight = self.class_weight) #TODO: Try 'balanced'?
+            class_weight = self.class_weight)
             model.fit(train_data, train_labels)
         else:
             model = SVC(kernel = self.kernel.evaluate,
