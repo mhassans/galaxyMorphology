@@ -90,12 +90,12 @@ def setConfigName(config):
         fileName += '-interaction' + config['interaction']
     
     fileName += '-weight'
-    if (config['class_weight'] == None):
+    if (config['class_weight'] == None): # Here, 'class' has nothing to do with classical vs quantum.
         fileName += 'None'
     elif (config['class_weight'] == 'balanced'):
         fileName += 'Balanced'
     else:
-        print('ERROR in funcs.py -> setConfigName function: You need to change this part of the code to handle the file name when weights are other than None or balanced.')
+        print('ERROR in funcs.py -> setConfigName function: You need to change this part of the code to set the file name when weights are other than None or balanced.')
         exit()
     testSetFraction = 1./config['n_splits']
     trainSetFraction = 1 - testSetFraction
