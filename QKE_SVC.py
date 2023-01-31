@@ -27,15 +27,16 @@ provider = IBMQ.get_provider(group='open')
 print('1411')
 from qiskit.utils import QuantumInstance
 print('1412')
-from qiskit.circuit import ParameterVector
+#from qiskit.circuit import ParameterVector
 print('1413')
 from qiskit_machine_learning.kernels import QuantumKernel
 print('1414')
+from qiskit.circuit.library import PauliFeatureMap
 import time
-path_for_imports = os.path.abspath('.')
+#path_for_imports = os.path.abspath('.')
 #print(path_for_imports)
-sys.path.append(path_for_imports) #for quantum_circuit
-from quantum_circuit import (param_feature_map, param_U_gate)
+#sys.path.append(path_for_imports) #for quantum_circuit
+#from quantum_circuit import (param_feature_map, param_U_gate)
 
 class QKE_SVC():
     """
@@ -68,14 +69,15 @@ class QKE_SVC():
 
             self.backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
             self.circuit_width = circuit_width
-            params = ParameterVector('phi', circuit_width)
-            U_gate = param_U_gate.U_flexible(circuit_width, 
-            params, 
-            single_mapping = self.single_mapping, 
-            pair_mapping = self.pair_mapping, 
-            interaction = self.interaction, 
-            alpha = self.alpha) 
-            featureMap = param_feature_map.feature_map(circuit_width, U_gate)
+            #params = ParameterVector('phi', circuit_width)
+            #U_gate = param_U_gate.U_flexible(circuit_width, 
+            #params, 
+            #single_mapping = self.single_mapping, 
+            #pair_mapping = self.pair_mapping, 
+            #interaction = self.interaction, 
+            #alpha = self.alpha) 
+            #featureMap = param_feature_map.feature_map(circuit_width, U_gate)
+            featureMap = PauliFeatureMap(circuit_width, alpha=-2*self.alpha, paulis=['Z', 'YY'], entanglement='full')
 
             self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
         self.classical = classical

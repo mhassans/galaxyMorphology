@@ -10,7 +10,7 @@ def run(config, submitToBatch):
     else:
         try:
             with open('log/' + fileName + '.out', 'w') as f:
-                subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=200)
+                subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=2000)
         except subprocess.TimeoutExpired:
             print('TOOK LONG TO RUN THE FOLLOWING FILE. TERMINATED. NEEDS BEING SUBMITTED TO THE BATCH:', fileName)
             print('*************************************************************')
@@ -31,7 +31,7 @@ def main(submitToBatch):
         pair_mapping = 1,
         interaction = 'YY',
         circuit_width = 7,
-        trainPlusTestSize = 25000,
+        trainPlusTestSize = 60,
         n_splits = 5,
         fold_idx = 0,
         modelSavedPath = 'trainedModels/',
@@ -40,7 +40,7 @@ def main(submitToBatch):
     #list of configs to iterate over 
     list_classical = [False] #e.g. [True, False]
     list_weight = [None] #e.g. [None, 'balanced']
-    list_fold_idx = list(range(config['n_splits'])) # run over all folds
+    list_fold_idx = [0]#list(range(config['n_splits'])) # run over all folds
     
     #Classical-only
     list_C_class = [10] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
