@@ -29,9 +29,12 @@ from qiskit.utils import QuantumInstance
 print('1412')
 #from qiskit.circuit import ParameterVector
 print('1413')
-from qiskit_machine_learning.kernels import QuantumKernel
+#from qiskit_machine_learning.kernels import QuantumKernel
 print('1414')
 from qiskit.circuit.library import PauliFeatureMap
+from qiskit_machine_learning.kernels import FidelityQuantumKernel
+from qiskit.algorithms.state_fidelities import ComputeUncompute
+from qiskit.primitives import Sampler
 import time
 #path_for_imports = os.path.abspath('.')
 #print(path_for_imports)
@@ -67,19 +70,20 @@ class QKE_SVC():
             self.pair_mapping = pair_mapping
             self.interaction = interaction
 
-            self.backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
+            #self.backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
             self.circuit_width = circuit_width
             #params = ParameterVector('phi', circuit_width)
             #U_gate = param_U_gate.U_flexible(circuit_width, 
-            #params, 
-            #single_mapping = self.single_mapping, 
-            #pair_mapping = self.pair_mapping, 
-            #interaction = self.interaction, 
-            #alpha = self.alpha) 
+            #                                 params, 
+            #                                 single_mapping = self.single_mapping, 
+            #                                 pair_mapping = self.pair_mapping, 
+            #                                 interaction = self.interaction, 
+            #                                 alpha = self.alpha) 
             #featureMap = param_feature_map.feature_map(circuit_width, U_gate)
             featureMap = PauliFeatureMap(circuit_width, alpha=-2*self.alpha, paulis=['Z', 'YY'], entanglement='full')
-
-            self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
+            fidelity = ComputeUncompute(sampler=Sampler())
+            #self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
+            self.kernel = FidelityQuantumKernel(feature_map=featureMap, fidelity=fidelity)
         self.classical = classical
         self.class_weight = class_weight
         self.modelSavedPath = modelSavedPath
