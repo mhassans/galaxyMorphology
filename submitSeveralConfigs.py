@@ -1,4 +1,5 @@
-import subprocess
+#import subprocess
+import os
 import sys
 from funcs import produceConfig, setConfigName
 
@@ -6,16 +7,18 @@ def run(config, submitToBatch):
     fileName = setConfigName(config)
     filePath = produceConfig(config, fileName)
     if (submitToBatch):
-        subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
+        #subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
+        os.system('qsub -v input="' + filePath + '" glxMorph.sh')
     else:
-        try:
-            with open('log/' + fileName + '.out', 'w') as f:
-                subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=2000)
-        except subprocess.TimeoutExpired:
-            print('TOOK LONG TO RUN THE FOLLOWING FILE. TERMINATED. NEEDS BEING SUBMITTED TO THE BATCH:', fileName)
-            print('*************************************************************')
-            with open("longJobs.txt", "a") as file: #add the name of the terminated job to the end of this txt file.
-                file.write(fileName)
+        os.system('python3 main.py '+ filePath + '> log/' + fileName + '.out')
+        #try:
+        #    with open('log/' + fileName + '.out', 'w') as f:
+        #        subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=2000)
+        #except subprocess.TimeoutExpired:
+        #    print('TOOK LONG TO RUN THE FOLLOWING FILE. TERMINATED. NEEDS BEING SUBMITTED TO THE BATCH:', fileName)
+        #    print('*************************************************************')
+        #    with open("longJobs.txt", "a") as file: #add the name of the terminated job to the end of this txt file.
+        #        file.write(fileName)
 
 def main(submitToBatch):
     #initialize config

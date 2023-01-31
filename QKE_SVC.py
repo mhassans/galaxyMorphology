@@ -31,10 +31,13 @@ print('1412')
 print('1413')
 #from qiskit_machine_learning.kernels import QuantumKernel
 print('1414')
+
 from qiskit.circuit.library import PauliFeatureMap
 from qiskit_machine_learning.kernels import FidelityQuantumKernel
 from qiskit.algorithms.state_fidelities import ComputeUncompute
-from qiskit.primitives import Sampler
+#from qiskit.primitives import Sampler
+from qiskit_ibm_runtime import Sampler, QiskitRuntimeService
+
 import time
 #path_for_imports = os.path.abspath('.')
 #print(path_for_imports)
@@ -81,7 +84,14 @@ class QKE_SVC():
             #                                 alpha = self.alpha) 
             #featureMap = param_feature_map.feature_map(circuit_width, U_gate)
             featureMap = PauliFeatureMap(circuit_width, alpha=-2*self.alpha, paulis=['Z', 'YY'], entanglement='full')
-            fidelity = ComputeUncompute(sampler=Sampler())
+
+            service = QiskitRuntimeService()
+            backend = service.backend("simulator_statevector")
+            sampler = Sampler(session=backend)
+
+            fidelity = ComputeUncompute(sampler=sampler)
+            #fidelity = ComputeUncompute(sampler=Sampler())
+            
             #self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
             self.kernel = FidelityQuantumKernel(feature_map=featureMap, fidelity=fidelity)
         self.classical = classical
