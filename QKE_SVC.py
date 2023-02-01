@@ -96,11 +96,8 @@ class QKE_SVC():
             model.fit(train_data, train_labels)
         else:
             if pegasus:
-                #model = PegasosQSVC(quantum_kernel=self.kernel,
-                #                    C=self.C_quant,
-                #                    num_steps=1000,
-                #                    seed=1)
-                model = PegasosQSVC(quantum_kernel=self.kernel)
+                model = PegasosQSVC(quantum_kernel=self.kernel,
+                                    C=self.C_quant)
             else:
                 model = SVC(kernel = self.kernel.evaluate,
                             C = self.C_quant,
