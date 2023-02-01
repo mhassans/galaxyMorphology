@@ -30,6 +30,9 @@ print('1412')
 from qiskit.circuit import ParameterVector
 print('1413')
 from qiskit_machine_learning.kernels import QuantumKernel
+print('1413.5')
+from qiskit_machine_learning.algorithms import PegasosQSVC
+from qiskit_machine_learning.algorithms import QSVC
 print('1414')
 import time
 path_for_imports = os.path.abspath('.')
@@ -83,20 +86,27 @@ class QKE_SVC():
         self.modelSavedPath = modelSavedPath
         self.cache_chosen = 1000
 
-    def train_model(self, train_data, train_labels, fileName):
+    def train_model(self, train_data, train_labels, fileName, pegasus=True):
         if self.classical:
             model = SVC(kernel = 'rbf', 
-            gamma = self.gamma,
-            C = self.C_class,
-            cache_size = self.cache_chosen,
-            class_weight = self.class_weight)
+                        gamma = self.gamma,
+                        C = self.C_class,
+                        cache_size = self.cache_chosen,
+                        class_weight = self.class_weight)
             model.fit(train_data, train_labels)
         else:
-            model = SVC(kernel = self.kernel.evaluate,
-            C = self.C_quant,
-            cache_size = self.cache_chosen,
-            class_weight = self.class_weight)
-            model.fit(train_data, train_labels)
+            if pegasus:
+                #model = PegasosQSVC(quantum_kernel=self.kernel,
+                #                    C=self.C_quant,
+                #                    num_steps=1000,
+                #                    seed=1)
+                model = PegasosQSVC(quantum_kernel=self.kernel)
+            else:
+                model = SVC(kernel = self.kernel.evaluate,
+                            C = self.C_quant,
+                            cache_size = self.cache_chosen,
+                            class_weight = self.class_weight)
+            model.fit(train_data.to_numpy(), train_labels.to_numpy())
         #save fitted SVC model
         filename = self.modelSavedPath + '/model_'+fileName+'.sav'
         if not Path(self.modelSavedPath).exists():
@@ -115,4 +125,4 @@ class QKE_SVC():
             self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName)
 
     def test(self, test_data):
-        return self.model.predict(test_data), self.model.decision_function(test_data)
+        return self.model.predict(test_data.to_numpy()), self.model.decision_function(test_data.to_numpy())
