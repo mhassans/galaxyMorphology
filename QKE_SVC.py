@@ -40,6 +40,10 @@ path_for_imports = os.path.abspath('.')
 sys.path.append(path_for_imports) #for quantum_circuit
 from quantum_circuit import (param_feature_map, param_U_gate)
 
+from qiskit_machine_learning.kernels import FidelityQuantumKernel
+from qiskit.algorithms.state_fidelities import ComputeUncompute
+from qiskit.primitives import Sampler
+
 class QKE_SVC():
     """
     Defines an SVC classifier model family - either classical or quantum-enhanced.
@@ -73,14 +77,16 @@ class QKE_SVC():
             self.circuit_width = circuit_width
             params = ParameterVector('phi', circuit_width)
             U_gate = param_U_gate.U_flexible(circuit_width, 
-            params, 
-            single_mapping = self.single_mapping, 
-            pair_mapping = self.pair_mapping, 
-            interaction = self.interaction, 
-            alpha = self.alpha) 
+                                             params, 
+                                             single_mapping = self.single_mapping, 
+                                             pair_mapping = self.pair_mapping, 
+                                             interaction = self.interaction, 
+                                             alpha = self.alpha) 
             featureMap = param_feature_map.feature_map(circuit_width, U_gate)
+            fidelity = ComputeUncompute(sampler=Sampler())
+            self.kernel = FidelityQuantumKernel(feature_map=featureMap, fidelity=fidelity)
 
-            self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
+
         self.classical = classical
         self.class_weight = class_weight
         self.modelSavedPath = modelSavedPath
@@ -96,11 +102,8 @@ class QKE_SVC():
             model.fit(train_data, train_labels)
         else:
             if pegasus:
-                #model = PegasosQSVC(quantum_kernel=self.kernel,
-                #                    C=self.C_quant,
-                #                    num_steps=1000,
-                #                    seed=1)
-                model = PegasosQSVC(quantum_kernel=self.kernel)
+                model = PegasosQSVC(quantum_kernel=self.kernel,
+                                   C=self.C_quant)
             else:
                 model = SVC(kernel = self.kernel.evaluate,
                             C = self.C_quant,
