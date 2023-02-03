@@ -41,16 +41,16 @@ class QKE_SVC():
     Quantum is Havlicek-based (IPQ).
     """
     def __init__(self,
-    classical,
-    class_weight, 
-    modelSavedPath,
-    gamma = None, 
-    C_class = None, 
-    alpha = None,
-    C_quant = None,
-    data_map_func = None,
-    interactions = None,
-    circuit_width = None):
+                 classical,
+                 class_weight, 
+                 modelSavedPath,
+                 gamma = None, 
+                 C_class = None, 
+                 alpha = None,
+                 C_quant = None,
+                 data_map_func = None,
+                 interactions = None,
+                 circuit_width = None):
         if classical:
             self.gamma = gamma
             self.C_class = C_class
@@ -62,7 +62,7 @@ class QKE_SVC():
 
             self.backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
             self.circuit_width = circuit_width
-            featureMap = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interactions, entanglement='full')
+            featureMap = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interactions, data_map_func=data_map_func, entanglement='full')
 
             self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
         self.classical = classical
@@ -73,17 +73,16 @@ class QKE_SVC():
     def train_model(self, train_data, train_labels, fileName):
         if self.classical:
             model = SVC(kernel = 'rbf', 
-            gamma = self.gamma,
-            C = self.C_class,
-            cache_size = self.cache_chosen,
-            class_weight = self.class_weight)
-            model.fit(train_data, train_labels)
+                        gamma = self.gamma,
+                        C = self.C_class,
+                        cache_size = self.cache_chosen,
+                        class_weight = self.class_weight)
         else:
             model = SVC(kernel = self.kernel.evaluate,
-            C = self.C_quant,
-            cache_size = self.cache_chosen,
-            class_weight = self.class_weight)
-            model.fit(train_data, train_labels)
+                        C = self.C_quant,
+                        cache_size = self.cache_chosen,
+                        class_weight = self.class_weight)
+        model.fit(train_data, train_labels)
         #save fitted SVC model
         filename = self.modelSavedPath + '/model_'+fileName+'.sav'
         if not Path(self.modelSavedPath).exists():

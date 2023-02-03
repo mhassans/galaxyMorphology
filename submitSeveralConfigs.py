@@ -31,7 +31,7 @@ def main(submitToBatch):
         data_map_func = None
         interactions = ['Z', 'YY']
         circuit_width = 7,
-        trainPlusTestSize = 25000,
+        trainPlusTestSize = 60,
         n_splits = 5,
         fold_idx = 0,
         modelSavedPath = 'trainedModels/',
@@ -49,7 +49,7 @@ def main(submitToBatch):
     #Quantum-only
     singleQubitInt = ['X', 'Y', 'Z']
     twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
-    list_alpha = [0.1, 0.5, 1.0]
+    list_alpha = [0.2, 0.6, 1.2, 1.6, 2]
     list_C_quant = [1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]#[1.0e+6]
     list_data_map_func = [None]    
     list_interactions = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
@@ -79,5 +79,5 @@ def main(submitToBatch):
                                     run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = True
+    submitToBatch = False
     main(submitToBatch)
