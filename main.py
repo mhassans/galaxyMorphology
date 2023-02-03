@@ -51,7 +51,7 @@ QKE_model = QKE_SVC(config['classical'],
                     alpha = config['alpha'],
                     C_quant = config['C_quant'],
                     data_map_func = config['data_map_func'],
-                    interaction = config['interactions'],
+                    interaction = config['interaction'],
                     circuit_width = config['circuit_width']
                    )
 

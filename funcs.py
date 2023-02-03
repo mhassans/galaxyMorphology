@@ -90,7 +90,7 @@ def setConfigName(config):
             fileName += 'None'
         else:
             fileName += config['data_map_func']
-        fileName += '-interaction' + 'and'.join(config['interactions'])
+        fileName += '-interaction' + 'and'.join(config['interaction'])
     
     fileName += '-weight'
     if (config['class_weight'] == None): # Here, 'class' has nothing to do with classical vs quantum.

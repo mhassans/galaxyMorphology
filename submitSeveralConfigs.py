@@ -28,8 +28,8 @@ def main(submitToBatch):
         C_class = 1.0e+6,
         alpha = 0.1,
         C_quant = 1.0e+6,
-        data_map_func = None
-        interactions = ['Z', 'YY']
+        data_map_func = None,
+        interaction = ['Z', 'YY'],
         circuit_width = 7,
         trainPlusTestSize = 60,
         n_splits = 5,
@@ -50,9 +50,9 @@ def main(submitToBatch):
     singleQubitInt = ['X', 'Y', 'Z']
     twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
     list_alpha = [0.2, 0.6, 1.2, 1.6, 2]
-    list_C_quant = [1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]#[1.0e+6]
+    list_C_quant = [1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]
     list_data_map_func = [None]    
-    list_interactions = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
+    list_interaction = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
     
     for clfType in list_classical:
         config['classical'] = clfType
@@ -74,8 +74,8 @@ def main(submitToBatch):
                             config['C_quant'] = CQuant
                             for data_map_func in list_data_map_func:
                                 config['data_map_func'] = data_map_func
-                                for interaction in list_interactions:
-                                    config['interactions'] = interaction
+                                for interaction in list_interaction:
+                                    config['interaction'] = interaction
                                     run(config, submitToBatch) #run
 
 if __name__ == "__main__":

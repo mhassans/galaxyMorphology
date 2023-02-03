@@ -49,7 +49,7 @@ class QKE_SVC():
                  alpha = None,
                  C_quant = None,
                  data_map_func = None,
-                 interactions = None,
+                 interaction = None,
                  circuit_width = None):
         if classical:
             self.gamma = gamma
@@ -58,11 +58,11 @@ class QKE_SVC():
             self.alpha = alpha
             self.C_quant = C_quant
             self.data_map_func = data_map_func
-            self.interactions = interactions
+            self.interaction = interaction
 
             self.backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
             self.circuit_width = circuit_width
-            featureMap = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interactions, data_map_func=data_map_func, entanglement='full')
+            featureMap = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interaction, data_map_func=data_map_func, entanglement='full')
 
             self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
         self.classical = classical
