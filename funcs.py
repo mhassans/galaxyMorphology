@@ -85,9 +85,12 @@ def setConfigName(config):
         fileName = 'Quant'
         fileName += '-alpha' + str(config['alpha']).replace('.','p')
         fileName += '-C' + str(config['C_quant']).replace('.','p')
-        fileName += '-singleMap' + str(config['single_mapping'])
-        fileName += '-pairMap' + str(config['pair_mapping'])
-        fileName += '-interaction' + config['interaction']
+        fileName += '-dataMapFunc'
+        if (config['data_map_func'] == None):
+            fileName += 'None'
+        else:
+            fileName += config['data_map_func']
+        fileName += '-interaction' + 'and'.join(config['interactions'])
     
     fileName += '-weight'
     if (config['class_weight'] == None): # Here, 'class' has nothing to do with classical vs quantum.

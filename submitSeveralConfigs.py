@@ -5,12 +5,13 @@ from funcs import produceConfig, setConfigName
 def run(config, submitToBatch):
     fileName = setConfigName(config)
     filePath = produceConfig(config, fileName)
+    maxRunTime = 2000 #seconds
     if (submitToBatch):
         subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
     else:
         try:
             with open('log/' + fileName + '.out', 'w') as f:
-                subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=200)
+                subprocess.run(['python', 'main.py', filePath], stdout=f, timeout=maxRunTime)
         except subprocess.TimeoutExpired:
             print('TOOK LONG TO RUN THE FOLLOWING FILE. TERMINATED. NEEDS BEING SUBMITTED TO THE BATCH:', fileName)
             print('*************************************************************')
@@ -27,9 +28,8 @@ def main(submitToBatch):
         C_class = 1.0e+6,
         alpha = 0.1,
         C_quant = 1.0e+6,
-        single_mapping = 1,
-        pair_mapping = 1,
-        interaction = 'YY',
+        data_map_func = None
+        interactions = ['Z', 'YY']
         circuit_width = 7,
         trainPlusTestSize = 25000,
         n_splits = 5,
@@ -39,7 +39,7 @@ def main(submitToBatch):
     )
     #list of configs to iterate over 
     list_classical = [False] #e.g. [True, False]
-    list_class_weight = [None] #e.g. [None, 'balanced']
+    list_class_weight = [None]#[None, 'balanced'] #e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
     #Classical-only
@@ -47,11 +47,12 @@ def main(submitToBatch):
     list_gamma = [1] #e.g. [0.1, 1, 'scale', 'auto']
     
     #Quantum-only
-    list_alpha = [0.1]
-    list_C_quant = [1.0e+6]
-    list_single_mapping = [1]
-    list_pair_mapping = [1]
-    list_interaction = ['YY']
+    singleQubitInt = ['X', 'Y', 'Z']
+    twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
+    list_alpha = [0.1, 0.5, 1.0]
+    list_C_quant = [1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]#[1.0e+6]
+    list_data_map_func = [None]    
+    list_interactions = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
     
     for clfType in list_classical:
         config['classical'] = clfType
@@ -71,13 +72,11 @@ def main(submitToBatch):
                         config['alpha'] = alpha
                         for CQuant in list_C_quant:
                             config['C_quant'] = CQuant
-                            for snglMap in list_single_mapping:
-                                config['single_mapping'] = snglMap
-                                for pairMap in list_pair_mapping:
-                                    config['pair_mapping'] = pairMap
-                                    for interaction in list_interaction:
-                                        config['interaction'] = interaction
-                                        run(config, submitToBatch) #run
+                            for data_map_func in list_data_map_func:
+                                config['data_map_func'] = data_map_func
+                                for interaction in list_interactions:
+                                    config['interactions'] = interaction
+                                    run(config, submitToBatch) #run
 
 if __name__ == "__main__":
     submitToBatch = True
