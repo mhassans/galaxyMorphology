@@ -3,8 +3,10 @@ import pandas as pd
 import re
 import sys
 
-resultsFilesPath = './jobsOutput/poly/'
-df = pd.read_csv("hyperParOptResults.csv")
+#SET THE PATH OF THE FILES HERE
+resultsFilesPath = './jobsOutput/quantumKernel/'
+
+df = pd.read_csv("hyperParOptResults.csv")#An empty df with column names
 
 for fileName in glob.glob(resultsFilesPath + '*.o*'):
     with open(fileName, "r") as file:
@@ -37,23 +39,46 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
     
     if lines:
         hypePars_splitted = hypePars.split("-")
-        if 'Class' not in hypePars_splitted[0]:
-            print("The word 'Class' is not in the string.")
-        else:
+        if ('Quant' in hypePars_splitted[0]) and ('Class' not in hypePars_splitted[0]):
+            alpha = hypePars_splitted[1].replace("alpha", "")
+            if "p" in alpha:
+                alpha = alpha.replace("p", ".")
+            const_C = hypePars_splitted[2].replace("C", "")
+            if "p" in const_C:
+                const_C = const_C.replace("p", ".")
+            dataMapFunc = hypePars_splitted[3].replace("dataMapFunc", "")
+            interaction = hypePars_splitted[4].replace("interaction", "")
+            weight = hypePars_splitted[5].replace("weight", "")
+            trainSize = hypePars_splitted[6].replace("trainSize", "")
+            testSize = hypePars_splitted[7].replace("testSize", "")
+            foldIdx = hypePars_splitted[8].replace("foldIdx", "").replace(".pkl", "")
+            if (trainSize=='20000' and testSize=='5000'):
+                #Index in this order: alpha, C-quant, dataMapFunc, interaction, weight
+                indexOfnewData = (alpha,const_C,dataMapFunc,interaction,weight)
+                newData = pd.DataFrame({
+                    "TimeToRun-fold"+foldIdx: [time],
+                    "rocAUC-fold"+foldIdx: [rocAUC],
+                    "F1score-fold"+foldIdx: [fOne],
+                    "Accuracy-fold"+foldIdx: [accuracy]
+                    }, index=[indexOfnewData])
+                
+                if indexOfnewData in df.index:
+                    df.update(newData)
+                else:
+                    df = pd.concat([df, newData], ignore_index=False)
+            else:
+                print('TRAIN AND TEST SIZE NOT 20K AND 5K, RESPECTIVELY.')
+
+        elif 'Class' in hypePars_splitted[0]:
             const_C = hypePars_splitted[1].replace("C", "")
             if "p" in const_C:
                 const_C = const_C.replace("p", ".")
-            
             gamma = hypePars_splitted[2].replace("gamma", "")
             if "p" in gamma:
                 gamma = gamma.replace("p", ".")
-            
             weight = hypePars_splitted[3].replace("weight", "")
-            
             trainSize = hypePars_splitted[4].replace("trainSize", "")
-            
             testSize = hypePars_splitted[5].replace("testSize", "")
-            
             foldIdx = hypePars_splitted[6].replace("foldIdx", "").replace(".pkl", "")
             
             #print('c', const_C)
@@ -75,16 +100,15 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
                     "F1score-fold"+foldIdx: [fOne],
                     "Accuracy-fold"+foldIdx: [accuracy]
                     }, index=[indexOfnewData])
-                #print('newData=', newData)
                 
                 if indexOfnewData in df.index:
                     df.update(newData)
-                    #print('UPDATED DF=', df)
                 else:
                     df = pd.concat([df, newData], ignore_index=False)
-                    #print('ADDED NEW ROW. RESULT IS:', df)
             else:
                 print('TRAIN AND TEST SIZE NOT 20K AND 5K, RESPECTIVELY.')
+        else:
+            print('CHECK THE FILE: IT IS NEITHER QUANTUM KERNEL NOR CLASSICAL.')
     else:
         print("EMPTY FILE")
     print('=========================================')

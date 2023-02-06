@@ -182,12 +182,12 @@ def plot_confusion_matrix(y_true, y_pred, normalize_by_yTrue=False, normalize_by
     plt.xlabel(xTitle)
     plt.clim(0,1)
 
-def scatterplotWithErrors(x, y, x_err, y_err, xlabel, ylabel, title=''):
+def scatterplotWithErrors(x, y, x_err, y_err, xlabel, ylabel, title='', xscale='log'):
     fig, ax = plt.subplots()
     ax.errorbar(x, y, xerr=x_err, yerr=y_err, fmt='o')
     ax.set_xlabel(xlabel)
     ax.set_ylabel(ylabel)
-    ax.set_xscale('log')
+    ax.set_xscale(xscale)
     ax.set_title(title)
     plt.show()
 

@@ -107,10 +107,13 @@ def setConfigName(config):
     fileName += '-foldIdx' + str(config['fold_idx'])
     return fileName
 
-def addMeanAndStdDev(df):
+def addMeanAndStdDev(df, classical):
     """
     Adds mean and std dev of metrics (roc, f1 score, and accuracy) and code run time as new df columns.
     Adds index information (weight, kernel, etc.) as new df columns.
+    inputs:
+        df: dataframe
+        classical (boolean): whether it is for classical or quantum kernel
     """
     times = ["TimeToRun-fold{}".format(i) for i in range(5)]
     rocAUCs = ["rocAUC-fold{}".format(i) for i in range(5)]
@@ -128,9 +131,16 @@ def addMeanAndStdDev(df):
     df['rocAUC-relError'] = df["rocAUC-std"]/df["rocAUC-mean"]
     df['fOne-relError'] = df["fOne-std"]/df["fOne-mean"]
     df['accuracy-relError'] = df["accuracy-std"]/df["accuracy-mean"]
-    #Add index to column. Example of index: "('RBF', '1000000.0', 'scale', 'None')"
-    df = df.assign(kernel = df.index.map(lambda x: str(ast.literal_eval(x)[0]))) #"ast" changes string back to tuple
-    df = df.assign(C_class = df.index.map(lambda x: float(ast.literal_eval(x)[1])))
-    df = df.assign(gamma = df.index.map(lambda x: str(ast.literal_eval(x)[2])))
-    df = df.assign(weight = df.index.map(lambda x: str(ast.literal_eval(x)[3])))
+    if classical:
+        #Add index to column. Example of index: "('RBF', '1000000.0', 'scale', 'None')"
+        df = df.assign(kernel = df.index.map(lambda x: str(ast.literal_eval(x)[0]))) #"ast" changes string back to tuple
+        df = df.assign(C_class = df.index.map(lambda x: float(ast.literal_eval(x)[1])))
+        df = df.assign(gamma = df.index.map(lambda x: str(ast.literal_eval(x)[2])))
+        df = df.assign(weight = df.index.map(lambda x: str(ast.literal_eval(x)[3])))
+    else:
+        df = df.assign(alpha = df.index.map(lambda x: str(ast.literal_eval(x)[0]))) #"ast" changes string back to tuple
+        df = df.assign(C_quant = df.index.map(lambda x: float(ast.literal_eval(x)[1])))
+        df = df.assign(dataMapFunc = df.index.map(lambda x: str(ast.literal_eval(x)[2])))
+        df = df.assign(interaction = df.index.map(lambda x: str(ast.literal_eval(x)[3])))
+        df = df.assign(weight= df.index.map(lambda x: str(ast.literal_eval(x)[4])))
     return df
