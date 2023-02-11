@@ -2,20 +2,7 @@ import yaml
 import ast
 import pandas as pd
 from sklearn.model_selection import KFold
-#from pathlib import Path
-
-
-#def load_config(file_path = None):
-#    path = Path(file_path)
-#    with open(path, 'r') as file:
-#        cfg = yaml.load(file, Loader = yaml.FullLoader)
-#    return cfg
-#
-#def parse_args():
-#    parser = argparse.ArgumentParser(description = 'Load config file for SVM classification.')
-#    parser.add_argument('config', type = str, help = 'Path to config file.')
-#
-#    return parser.parse_args()
+from functools import reduce
 
 def fix_ttype_feature(df, Ndigit=5):
     """
@@ -89,7 +76,7 @@ def setConfigName(config):
         if (config['data_map_func'] == None):
             fileName += 'None'
         else:
-            fileName += config['data_map_func']
+            fileName += config['data_map_func'].__name__
         fileName += '-interaction' + 'and'.join(config['interaction'])
     
     fileName += '-weight'
@@ -144,3 +131,23 @@ def addMeanAndStdDev(df, classical):
         df = df.assign(interaction = df.index.map(lambda x: str(ast.literal_eval(x)[3])))
         df = df.assign(weight= df.index.map(lambda x: str(ast.literal_eval(x)[4])))
     return df
+
+def dataMap_custom1(x):
+    coeff = x[0] if len(x) == 1 else reduce(lambda m, n: m*n, x)
+    return coeff
+
+def dataMap_custom2(x):
+    coeff = x[0] if len(x) == 1 else reduce(lambda m, n: m*n, 1 - x)
+    return coeff
+
+def dataMap_custom3(x):
+    coeff = x[0] if len(x) == 1 else reduce(lambda m, n: m * n, [(x[i] - x[j])
+                                                                 for i in range(len(x))
+                                                                 for j in range(i + 1, len(x))
+                                                                ])
+    coeff = abs(coeff)
+    return coeff
+
+def dataMap_custom4(x):
+    coeff = x[0] if len(x) == 1 else (1 - dataMap_custom3(x))
+    return coeff

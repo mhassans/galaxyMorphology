@@ -1,11 +1,12 @@
 import subprocess
 import sys
 from funcs import produceConfig, setConfigName
+from funcs import dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4
 
 def run(config, submitToBatch):
     fileName = setConfigName(config)
     filePath = produceConfig(config, fileName)
-    maxRunTime = 2000 #seconds
+    maxRunTime = 2000 #in seconds. Only applies when running locally (i.e. not when submitted to the batch)
     if (submitToBatch):
         subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
     else:
@@ -31,7 +32,7 @@ def main(submitToBatch):
         data_map_func = None,
         interaction = ['Z', 'YY'],
         circuit_width = 7,
-        trainPlusTestSize = 25000,
+        trainPlusTestSize = 60,
         n_splits = 5,
         fold_idx = 0,
         modelSavedPath = 'trainedModels/',
@@ -40,20 +41,22 @@ def main(submitToBatch):
     #list of configs to iterate over 
     list_classical = [False] #e.g. [True, False]
     list_weight = [None] #e.g. [None, 'balanced']
-    list_fold_idx = list(range(config['n_splits'])) # run over all folds
+    list_fold_idx = [0]#list(range(config['n_splits'])) # run over all folds
     
-    #Classical-only
+    #Classical-only lists to iterate over
     list_C_class = [10] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
     list_gamma = [1] #e.g. [0.1, 1, 'scale', 'auto']
     
-    #Quantum-only
+    #Introduce some auxiliary variables that is sometimes helpful for defining list_interaction below
     singleQubitInt = ['X', 'Y', 'Z']
     twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
     singleThenTwoQubitInt = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
-    list_alpha = [0.2, 1.2, 2]#[0.2, 0.6, 1.2, 1.6, 2]
-    list_C_quant = [10, 1000, 1.0e+6]#[1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]
-    list_data_map_func = [None]    
-    list_interaction = [item for item in singleThenTwoQubitInt if item[1] == 'YY'] #could use other singleThenTwoQubitInt elements
+    
+    #Quantum-only lists to iterate over
+    list_alpha = [0.05]#, 1.2, 2]#[0.2, 0.6, 1.2, 1.6, 2]
+    list_C_quant = [500]#[1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]
+    list_data_map_func = [dataMap_custom3, dataMap_custom4]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4, None]#[None]    
+    list_interaction = [['Z', 'ZZ']] #a subset of singleThenTwoQubitInt
     
     for clfType in list_classical:
         config['classical'] = clfType
@@ -80,5 +83,5 @@ def main(submitToBatch):
                                     run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = True
+    submitToBatch = False
     main(submitToBatch)
