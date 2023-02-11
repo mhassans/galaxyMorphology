@@ -55,7 +55,7 @@ def main(submitToBatch):
     #Quantum-only lists to iterate over
     list_alpha = [0.05]#, 1.2, 2]#[0.2, 0.6, 1.2, 1.6, 2]
     list_C_quant = [500]#[1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]
-    list_data_map_func = [dataMap_custom3, dataMap_custom4]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4, None]#[None]    
+    list_data_map_func = [dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4, None]#[None]    
     list_interaction = [['Z', 'ZZ']] #a subset of singleThenTwoQubitInt
     
     for clfType in list_classical:

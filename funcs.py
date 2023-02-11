@@ -3,6 +3,7 @@ import ast
 import pandas as pd
 from sklearn.model_selection import KFold
 from functools import reduce
+import numpy as np
 
 def fix_ttype_feature(df, Ndigit=5):
     """
@@ -141,11 +142,11 @@ def dataMap_custom2(x):
     return coeff
 
 def dataMap_custom3(x):
-    coeff = x[0] if len(x) == 1 else reduce(lambda m, n: m * n, [(x[i] - x[j])
-                                                                 for i in range(len(x))
-                                                                 for j in range(i + 1, len(x))
-                                                                ])
-    coeff = abs(coeff)
+    """
+    x: array
+    returns \prod_{i,j}(x[i]-x[j]) for all i & j in indices where i<j. If len(x) is 1 then returns x[0].
+    """
+    coeff = x[0] if len(x) == 1 else reduce(lambda m, n: m * n, [(x[i] - x[j]) for i in range(len(x)) for j in range(i + 1, len(x))])
     return coeff
 
 def dataMap_custom4(x):
