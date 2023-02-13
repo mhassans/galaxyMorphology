@@ -20,7 +20,7 @@ def run(config, submitToBatch):
                 file.write(fileName)
 
 def main(submitToBatch):
-    #initialize config
+    #initialize config. Some values will be changed later in this script.
     config = dict(
         load_model = False,
         class_weight = None,
@@ -32,56 +32,59 @@ def main(submitToBatch):
         data_map_func = None,
         interaction = ['Z', 'YY'],
         circuit_width = 7,
-        trainPlusTestSize = 60,
+        trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/'
     )
     #list of configs to iterate over 
+    list_trainPlusTestSize = [12500, 6250, 1250, 625]
     list_classical = [False] #e.g. [True, False]
-    list_weight = [None] #e.g. [None, 'balanced']
-    list_fold_idx = [0]#list(range(config['n_splits'])) # run over all folds
+    list_weight = ['balanced'] #e.g. [None, 'balanced']
+    list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
     #Classical-only lists to iterate over
     list_C_class = [10] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
     list_gamma = [1] #e.g. [0.1, 1, 'scale', 'auto']
     
     #Introduce some auxiliary variables that is sometimes helpful for defining list_interaction below
-    singleQubitInt = ['X', 'Y', 'Z']
-    twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
-    singleThenTwoQubitInt = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
+    #singleQubitInt = ['X', 'Y', 'Z']
+    #twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
+    #singleThenTwoQubitInt = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
     
     #Quantum-only lists to iterate over
-    list_alpha = [0.05]#, 1.2, 2]#[0.2, 0.6, 1.2, 1.6, 2]
+    list_alpha = [0.05]#[0.2, 0.6, 1.2, 1.6, 2]
     list_C_quant = [500]#[1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]
-    list_data_map_func = [dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4, None]#[None]    
-    list_interaction = [['Z', 'ZZ']] #a subset of singleThenTwoQubitInt
-    
-    for clfType in list_classical:
-        config['classical'] = clfType
-        for weight in list_weight:
-            config['class_weight'] = weight
-            for foldID in list_fold_idx:
-                config['fold_idx'] = foldID
-                
-                if config['classical']:
-                    for Cclass in list_C_class:
-                        config['C_class'] = Cclass
-                        for gamma in list_gamma:
-                            config['gamma'] = gamma
-                            run(config, submitToBatch) #run
-                else:
-                    for alpha in list_alpha:
-                        config['alpha'] = alpha
-                        for CQuant in list_C_quant:
-                            config['C_quant'] = CQuant
-                            for data_map_func in list_data_map_func:
-                                config['data_map_func'] = data_map_func
-                                for interaction in list_interaction:
-                                    config['interaction'] = interaction
-                                    run(config, submitToBatch) #run
+    list_data_map_func = [None]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4]
+    list_interaction = [['Z', 'YZ']]#a subset of singleThenTwoQubitInt
+   
+    for trainPlusTestSize in list_trainPlusTestSize:
+        config['trainPlusTestSize'] = trainPlusTestSize
+        for clfType in list_classical:
+            config['classical'] = clfType
+            for weight in list_weight:
+                config['class_weight'] = weight
+                for foldID in list_fold_idx:
+                    config['fold_idx'] = foldID
+                    
+                    if config['classical']:
+                        for Cclass in list_C_class:
+                            config['C_class'] = Cclass
+                            for gamma in list_gamma:
+                                config['gamma'] = gamma
+                                run(config, submitToBatch) #run
+                    else:
+                        for alpha in list_alpha:
+                            config['alpha'] = alpha
+                            for CQuant in list_C_quant:
+                                config['C_quant'] = CQuant
+                                for data_map_func in list_data_map_func:
+                                    config['data_map_func'] = data_map_func
+                                    for interaction in list_interaction:
+                                        config['interaction'] = interaction
+                                        run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = False
+    submitToBatch = True
     main(submitToBatch)
