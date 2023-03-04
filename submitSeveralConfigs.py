@@ -39,14 +39,14 @@ def main(submitToBatch):
         resultOutputPath = 'output/'
     )
     #list of configs to iterate over 
-    list_trainPlusTestSize = [12500, 6250, 1250, 625]
-    list_classical = [False] #e.g. [True, False]
+    list_trainPlusTestSize = [62500, 125000]
+    list_classical = [True] #e.g. [True, False]
     list_weight = ['balanced'] #e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
     #Classical-only lists to iterate over
-    list_C_class = [10] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
-    list_gamma = [1] #e.g. [0.1, 1, 'scale', 'auto']
+    list_C_class = [100] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
+    list_gamma = ['auto'] #e.g. [0.1, 1, 'scale', 'auto']
     
     #Introduce some auxiliary variables that is sometimes helpful for defining list_interaction below
     #singleQubitInt = ['X', 'Y', 'Z']
@@ -86,5 +86,5 @@ def main(submitToBatch):
                                         run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = True
+    submitToBatch = False
     main(submitToBatch)
