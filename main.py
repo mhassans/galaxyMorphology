@@ -31,8 +31,9 @@ except EnvironmentError:
     exit()
 fileName = setConfigName(config)
 
-df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'])
-train_data, train_labels, test_data, test_labels = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
+df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'])
+train_data, train_labels, test_data, test_labels, train_extraInfo, test_extraInfo \
+            = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
 n_features = np.shape(train_data)[1]
@@ -85,6 +86,7 @@ print("Applying model to test set took ", timeStampAfterTesting - timeStampAfter
 test_data.insert(np.shape(test_data)[1], 'predictedLabels', model_predictions)
 test_data.insert(np.shape(test_data)[1], 'trueLabels', test_labels)
 test_data.insert(np.shape(test_data)[1], 'scores', model_scores)
+test_data = pd.concat([test_extraInfo, test_data], axis=1)
 
 timeStampAfterAddCol = time.time()
 print("Adding results to dataframe took ", timeStampAfterAddCol - timeStampAfterTesting, " seconds.")

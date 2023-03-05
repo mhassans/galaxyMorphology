@@ -51,7 +51,8 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
             weight = hypePars_splitted[5].replace("weight", "")
             trainSize = hypePars_splitted[6].replace("trainSize", "")
             testSize = hypePars_splitted[7].replace("testSize", "")
-            foldIdx = hypePars_splitted[8].replace("foldIdx", "").replace(".pkl", "")
+            foldIdx = hypePars_splitted[8].replace("foldIdx", "")
+            minOfK = hypePars_splitted[9].replace("minOfK", "").replace(".pkl", "")
             if (trainSize=='20000' and testSize=='5000'):
                 #Index in this order: alpha, C-quant, dataMapFunc, interaction, weight
                 indexOfnewData = (alpha,const_C,dataMapFunc,interaction,weight)
@@ -79,7 +80,8 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
             weight = hypePars_splitted[3].replace("weight", "")
             trainSize = hypePars_splitted[4].replace("trainSize", "")
             testSize = hypePars_splitted[5].replace("testSize", "")
-            foldIdx = hypePars_splitted[6].replace("foldIdx", "").replace(".pkl", "")
+            foldIdx = hypePars_splitted[6].replace("foldIdx", "")
+            minOfK = hypePars_splitted[7].replace("minOfK", "").replace(".pkl", "")
             
             #print('c', const_C)
             #print('gamma', gamma)
@@ -113,4 +115,4 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
         print("EMPTY FILE")
     print('=========================================')
 
-df.to_csv(resultsFilesPath + "hyperParOptResults2.csv", index=True)
+df.to_csv(resultsFilesPath + "hyperParOptResults2-minOfK"+minOfK+".csv", index=True)

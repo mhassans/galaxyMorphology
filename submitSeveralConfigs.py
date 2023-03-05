@@ -31,15 +31,17 @@ def main(submitToBatch):
         C_quant = 1.0e+6,
         data_map_func = None,
         interaction = ['Z', 'YY'],
-        circuit_width = 7,
+        circuit_width = 5,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,
+        minOfK = 5,
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/'
     )
     #list of configs to iterate over 
-    list_trainPlusTestSize = [62500, 125000]
+    list_minOfK = [5, 10, 20]
+    list_trainPlusTestSize = [500]
     list_classical = [True] #e.g. [True, False]
     list_weight = ['balanced'] #e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
@@ -59,31 +61,33 @@ def main(submitToBatch):
     list_data_map_func = [None]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4]
     list_interaction = [['Z', 'YZ']]#a subset of singleThenTwoQubitInt
    
-    for trainPlusTestSize in list_trainPlusTestSize:
-        config['trainPlusTestSize'] = trainPlusTestSize
-        for clfType in list_classical:
-            config['classical'] = clfType
-            for weight in list_weight:
-                config['class_weight'] = weight
-                for foldID in list_fold_idx:
-                    config['fold_idx'] = foldID
-                    
-                    if config['classical']:
-                        for Cclass in list_C_class:
-                            config['C_class'] = Cclass
-                            for gamma in list_gamma:
-                                config['gamma'] = gamma
-                                run(config, submitToBatch) #run
-                    else:
-                        for alpha in list_alpha:
-                            config['alpha'] = alpha
-                            for CQuant in list_C_quant:
-                                config['C_quant'] = CQuant
-                                for data_map_func in list_data_map_func:
-                                    config['data_map_func'] = data_map_func
-                                    for interaction in list_interaction:
-                                        config['interaction'] = interaction
-                                        run(config, submitToBatch) #run
+    for minOfK in list_minOfK:
+        config['minOfK'] = minOfK
+        for trainPlusTestSize in list_trainPlusTestSize:
+            config['trainPlusTestSize'] = trainPlusTestSize
+            for clfType in list_classical:
+                config['classical'] = clfType
+                for weight in list_weight:
+                    config['class_weight'] = weight
+                    for foldID in list_fold_idx:
+                        config['fold_idx'] = foldID
+                        
+                        if config['classical']:
+                            for Cclass in list_C_class:
+                                config['C_class'] = Cclass
+                                for gamma in list_gamma:
+                                    config['gamma'] = gamma
+                                    run(config, submitToBatch) #run
+                        else:
+                            for alpha in list_alpha:
+                                config['alpha'] = alpha
+                                for CQuant in list_C_quant:
+                                    config['C_quant'] = CQuant
+                                    for data_map_func in list_data_map_func:
+                                        config['data_map_func'] = data_map_func
+                                        for interaction in list_interaction:
+                                            config['interaction'] = interaction
+                                            run(config, submitToBatch) #run
 
 if __name__ == "__main__":
     submitToBatch = False
