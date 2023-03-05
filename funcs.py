@@ -43,7 +43,7 @@ def get_train_test(df, n_splits=5, fold_idx=0):
     train = df.iloc[train_id]
     test = df.iloc[test_id]
     features = ['C','A','S','H','G2']
-    labels = ['SPIRAL']
+    labels = 'SPIRAL'
     extraInfo = ['OBJID', 'TType','K']
     train_data = train[features]
     train_labels = train[labels]

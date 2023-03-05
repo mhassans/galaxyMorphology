@@ -31,7 +31,7 @@ def main(submitToBatch):
         C_quant = 1.0e+6,
         data_map_func = None,
         interaction = ['Z', 'YY'],
-        circuit_width = 7,
+        circuit_width = 5,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,
