@@ -16,7 +16,7 @@ def fix_ttype_feature(df, Ndigit=5):
     df = df.astype({'TType': 'float'})
     return df
 
-def prepare_dataframe(trainPlusTestSize):
+def prepare_dataframe(trainPlusTestSize, minOfK):
     GZ1 = pd.read_csv('data/GalaxyZoo1/GZ1.csv') #Galaxy zoo data from data.galaxyzoo.org (unwanted columns removed)
     features = pd.read_csv('data/features/features.csv') 
                     #from sciencedirect.com/science/article/pii/S2213133719300757 (unwanted columns removed)
@@ -28,6 +28,7 @@ def prepare_dataframe(trainPlusTestSize):
     df = df[(df['G2']>-6000) & (df['S']>-6000) & (df['A']>-6000) & (df['C']>-6000)] #discard outliers
     df = df.drop(['Error'], axis=1) 
     df = fix_ttype_feature(df)
+    df = df[df['K']>minOfK]
     df = df.sample(n=trainPlusTestSize, random_state=1)
     df = df.reset_index(drop=True)
     return df
@@ -41,11 +42,16 @@ def get_train_test(df, n_splits=5, fold_idx=0):
     train_id, test_id = indices[fold_idx]
     train = df.iloc[train_id]
     test = df.iloc[test_id]
-    train_data = train.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
-    train_labels = train['SPIRAL']
-    test_data = test.drop(['OBJID','SPIRAL','ELLIPTICAL'], axis=1)
-    test_labels = test['SPIRAL']
-    return train_data, train_labels, test_data, test_labels
+    features = ['C','A','S','H','G2']
+    labels = ['SPIRAL']
+    extraInfo = ['OBJID', 'TType','K']
+    train_data = train[features]
+    train_labels = train[labels]
+    train_extraInfo = train[extraInfo]
+    test_data = test[features]
+    test_labels = test[labels]
+    test_extraInfo = test[extraInfo]
+    return train_data, train_labels, test_data, test_labels, train_extraInfo, test_extraInfo
 
 def normalize_data(df):
     return ((df-df.min())/(df.max()-df.min()))
@@ -93,6 +99,7 @@ def setConfigName(config):
     fileName += '-trainSize' + str(int(config['trainPlusTestSize']*trainSetFraction))
     fileName += '-testSize' + str(int(config['trainPlusTestSize']*testSetFraction))
     fileName += '-foldIdx' + str(config['fold_idx'])
+    fileName += '-minOfK' + str(config['minOfK'])
     return fileName
 
 def addMeanAndStdDev(df, classical):
