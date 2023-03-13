@@ -6,6 +6,7 @@ import sys
 from sklearn.metrics import confusion_matrix
 import itertools
 import seaborn as sns
+import re
 
 def double_roc(df1, title1, df2, title2):
     fpr1, tpr1, _ = roc_curve(df1['trueLabels'], df1['scores'])
@@ -198,3 +199,71 @@ def scatterplotColored(x, y, hue, data, palette, legendOutsideGraph=False, loglo
     if loglog:
         plt.xscale('log')
         plt.yscale('log')
+
+def plot_roc_curve_custom(fpr, tpr, label=None, color='b', alpha=1):
+    plt.plot(fpr, tpr, color+'-', linewidth=1, label=label, alpha=alpha)
+    plt.plot([0, 1], [0, 1], 'k:',linewidth=0.8)
+    plt.axis([0, 1, 0, 1])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+
+def plot_roc_compare(path_quant, path_class):
+    n_fold = 5
+    mean_fpr_quant = np.linspace(0, 1, 100)
+    mean_tpr_quant = 0
+    mean_fpr_class = np.linspace(0, 1, 100)
+    mean_tpr_class = 0
+    auc_score_quant = []
+    auc_score_class = []
+    
+    df_quant_array = []
+    df_class_array = []
+    for i in range(n_fold):
+        df_quant_array.append(pd.read_pickle(path_quant.format(i)))
+        df_class_array.append(pd.read_pickle(path_class.format(i)))
+        
+    match1 = re.search(r'trainSize(\d+)', path_quant)
+    if match1:
+        trainSize_quant = match1.group(1)
+    match2 = re.search(r'trainSize(\d+)', path_class)
+    if match2:
+        trainSize_class = match2.group(1) 
+    assert trainSize_quant == trainSize_class, "Code needs to be changed if train sizes are not equal"
+
+    match3 = re.search(r'minOfK(\d+)', path_quant)
+    if match3:
+        k_quant = match3.group(1)
+    match4 = re.search(r'minOfK(\d+)', path_class)
+    if match4:
+        k_class = match4.group(1)
+    assert k_quant == k_class, "Code needs to be changed if k values are not equal"
+
+    
+    alpha_folds = 0.1
+    color_quant = 'b'
+    color_class = 'r'
+    fig = plt.figure()
+    for i in range(n_fold):
+        #quantum: roc curves for all folds
+        fpr_quant, tpr_quant, thresholds_quant = roc_curve(df_quant_array[i]['trueLabels'], df_quant_array[i]['scores'])
+        mean_tpr_quant += np.interp(mean_fpr_quant, fpr_quant, tpr_quant)
+        auc_score_quant.append(auc(fpr_quant, tpr_quant))
+        plot_roc_curve_custom(fpr_quant, tpr_quant, color=color_quant, alpha=alpha_folds)#, f'ROC fold {i+1} (AUC = {auc_score:.3f})')
+        
+        #classical: roc curves for all folds
+        fpr_class, tpr_class, thresholds_class = roc_curve(df_class_array[i]['trueLabels'], df_class_array[i]['scores'])
+        mean_tpr_class += np.interp(mean_fpr_class, fpr_class, tpr_class)
+        auc_score_class.append(auc(fpr_class, tpr_class))
+        plot_roc_curve_custom(fpr_class, tpr_class, color=color_class, alpha=alpha_folds)#, f'ROC fold {i+1} (AUC = {auc_score:.3f})')
+
+    mean_tpr_quant /= 5
+    mean_tpr_class /= 5
+    #plot average roc curves
+    plot_roc_curve_custom(mean_fpr_quant, mean_tpr_quant, f'Quantum kernel \
+                (AUC = {np.mean(auc_score_quant):.3f} $\pm$ {np.std(auc_score_quant):.3f})', color=color_quant)
+    plot_roc_curve_custom(mean_fpr_class, mean_tpr_class, f'Classical kernel\
+                (AUC = {np.mean(auc_score_class):.3f} $\pm$ {np.std(auc_score_class):.3f})', color=color_class)
+    plt.title("Train size = " + trainSize_quant + "; K >= " + k_quant)
+    plt.legend(loc='lower right')
+    plt.show()
+    fig.savefig("Figures/" + 'trainSize' + trainSize_quant + '-K' + k_quant + '.pdf', dpi=300,bbox_inches='tight')
