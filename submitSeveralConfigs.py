@@ -41,7 +41,7 @@ def main(submitToBatch):
     )
     #list of configs to iterate over 
     list_minOfK = [5, 10, 20]
-    list_trainPlusTestSize = [500]
+    list_trainPlusTestSize = [100000]
     list_classical = [True] #e.g. [True, False]
     list_weight = ['balanced'] #e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
@@ -90,5 +90,5 @@ def main(submitToBatch):
                                             run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = False
+    submitToBatch = True
     main(submitToBatch)
