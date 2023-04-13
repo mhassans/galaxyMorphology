@@ -1,0 +1,36 @@
+1
+12
+13
+14
+142
+142
+143
+144
+145
+146
+147
+148
+149
+1410
+1411
+1412
+1413
+1414
+15
+16
+17
+18
+2
+Time elapsed before training starts:  9.992702007293701  seconds.
+SVC model trained and stored as: trainedModels//model_Class-C10-gamma0p1-weightBalanced-trainSize20000-testSize5000-foldIdx4-minOfK5.sav
+Storing model on disk took  0.00942540168762207  seconds
+Training took  15.02828598022461  seconds.
+Applying model to test set took  8.317633152008057  seconds.
+Adding results to dataframe took  0.002701282501220703  seconds.
+Result from applying the SVC model to the test set stored as: output//result_Class-C10-gamma0p1-weightBalanced-trainSize20000-testSize5000-foldIdx4-minOfK5.pkl
+Saving results dataframe took  0.008042573928833008  seconds.
+Running the code took  33.349377155303955  seconds.
+######################################################
+ROC AUC:  0.9379358495916317
+F1 score:  0.8866333095067906
+Accuracy:  0.8414

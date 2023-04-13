@@ -1,0 +1,38 @@
+/home/mhassans/projects/galaxyMorphology/funcs.py:33: DtypeWarning: Columns (1) have mixed types. Specify dtype option on import or set low_memory=False.
+  features = pd.read_csv('data/features/features.csv')
+1
+12
+13
+14
+142
+142
+143
+144
+145
+146
+147
+148
+149
+1410
+1411
+1412
+1413
+1414
+15
+16
+17
+18
+2
+Time elapsed before training starts:  14.250080347061157  seconds.
+SVC model trained and stored as: trainedModels//model_Quant-alpha0p001-C1000-dataMapFuncNone-interactionZandZZ-weightNone-trainSize20000-testSize5000-foldIdx0.sav
+Storing model on disk took  0.07200169563293457  seconds
+Training took  5873.924120187759  seconds.
+Applying model to test set took  6577.674637556076  seconds.
+Adding results to dataframe took  0.002925395965576172  seconds.
+Result from applying the SVC model to the test set stored as: output//result_Quant-alpha0p001-C1000-dataMapFuncNone-interactionZandZZ-weightNone-trainSize20000-testSize5000-foldIdx0.pkl
+Saving results dataframe took  0.01699376106262207  seconds.
+Running the code took  12465.868766784668  seconds.
+######################################################
+ROC AUC:  0.9786493117436919
+F1 score:  0.9576336863859468
+Accuracy:  0.9344
