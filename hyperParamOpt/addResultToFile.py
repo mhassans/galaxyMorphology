@@ -4,7 +4,7 @@ import re
 import sys
 
 #SET THE PATH OF THE FILES HERE
-resultsFilesPath = './jobsOutput/quantumKernel/'
+resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/classicalKernel/RBF/'
 
 df = pd.read_csv("hyperParOptResults.csv")#An empty df with column names
 
@@ -115,4 +115,4 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
         print("EMPTY FILE")
     print('=========================================')
 
-df.to_csv(resultsFilesPath + "hyperParOptResults2-minOfK"+minOfK+".csv", index=True)
+df.to_csv(resultsFilesPath + "hyperParOptResults2.csv", index=True)
