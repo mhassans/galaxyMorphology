@@ -192,13 +192,15 @@ def scatterplotWithErrors(x, y, x_err, y_err, xlabel, ylabel, title='', xscale='
     ax.set_title(title)
     plt.show()
 
-def scatterplotColored(x, y, hue, data, palette, legendOutsideGraph=False, loglog=False):
+def scatterplotColored(x, y, hue, data, palette, legendOutsideGraph=False, loglog=False, axesRanges=None):
     sns.scatterplot(x=x, y=y, hue=hue, data=data, palette=palette)
     if legendOutsideGraph:
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     if loglog:
         plt.xscale('log')
         plt.yscale('log')
+    if axesRanges is not None:
+        plt.axis(axesRanges)
 
 def plot_roc_curve_custom(fpr, tpr, label=None, color='b', alpha=1):
     plt.plot(fpr, tpr, color+'-', linewidth=1, label=label, alpha=alpha)
