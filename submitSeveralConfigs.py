@@ -6,7 +6,7 @@ from funcs import dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_cus
 def run(config, submitToBatch):
     fileName = setConfigName(config)
     filePath = produceConfig(config, fileName)
-    maxRunTime = 2000 #in seconds. Only applies when running locally (i.e. not when submitted to the batch)
+    maxRunTime = 500 #in seconds. Only applies when running locally (i.e. not when submitted to the batch)
     if (submitToBatch):
         subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
     else:
@@ -16,7 +16,7 @@ def run(config, submitToBatch):
         except subprocess.TimeoutExpired:
             print('TOOK LONG TO RUN THE FOLLOWING FILE. TERMINATED. NEEDS BEING SUBMITTED TO THE BATCH:', fileName)
             print('*************************************************************')
-            with open("longJobs.txt", "a") as file: #add the name of the terminated job to the end of this txt file.
+            with open("longJobs6.txt", "a") as file: #add the name of the terminated job to the end of this txt file.
                 file.write(fileName)
 
 def main(submitToBatch):
@@ -40,26 +40,26 @@ def main(submitToBatch):
         resultOutputPath = 'output/'
     )
     #list of configs to iterate over 
-    list_minOfK = [5, 10, 20]
-    list_trainPlusTestSize = [100000]
-    list_classical = [True] #e.g. [True, False]
-    list_weight = ['balanced'] #e.g. [None, 'balanced']
+    list_minOfK = [5]#[5, 10, 20]
+    list_trainPlusTestSize = [25000]
+    list_classical = [False] #e.g. [True, False]
+    list_weight = [None]#['balanced'] #e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
     #Classical-only lists to iterate over
-    list_C_class = [100] #e.g. [0.1, 1.0, 10, 100, 1000, 10000]
-    list_gamma = ['auto'] #e.g. [0.1, 1, 'scale', 'auto']
+    list_C_class = [1.0e+8]#[100, 1000, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7, 1.0e+8]
+    list_gamma = [0.01, 0.05, 0.1, 0.5, 1, 2, 5, 10, 100, 'auto', 'scale']
     
     #Introduce some auxiliary variables that is sometimes helpful for defining list_interaction below
-    #singleQubitInt = ['X', 'Y', 'Z']
-    #twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
-    #singleThenTwoQubitInt = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
+    singleQubitInt = ['X', 'Y', 'Z']
+    twoQubitInt = [first + second for first in singleQubitInt for second in singleQubitInt] # create this list: ['XX', 'XY', ...]
+    singleThenTwoQubitInt = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
     
     #Quantum-only lists to iterate over
-    list_alpha = [0.05]#[0.2, 0.6, 1.2, 1.6, 2]
-    list_C_quant = [500]#[1.0, 10, 100, 1000, 1.0e+4, 1.0e+5, 1.0e+6]
+    list_alpha = [0.03]#[0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.13, 0.5]
+    list_C_quant = [1.0e+7]#[1000, 1.0e+5]#[10, 1000, 1.0e+5, 1.0e+6]
     list_data_map_func = [None]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4]
-    list_interaction = [['Z', 'YZ']]#a subset of singleThenTwoQubitInt
+    list_interaction = singleThenTwoQubitInt #[['Z', 'ZX']]#a subset of singleThenTwoQubitInt
    
     for minOfK in list_minOfK:
         config['minOfK'] = minOfK
