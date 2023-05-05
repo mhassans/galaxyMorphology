@@ -4,6 +4,7 @@ import re
 import sys
 
 #SET THE PATH OF THE FILES HERE
+#resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/quantumKernel/'
 resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/classicalKernel/RBF/'
 
 df = pd.read_csv("hyperParOptResults.csv")#An empty df with column names
