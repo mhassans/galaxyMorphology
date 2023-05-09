@@ -3,7 +3,6 @@ data/features/Barchi19_Morph-catalog_670k-galaxies.csv
 .ipynb_checkpoints/
 */__pycache__/
 __pycache__/
-*.pkl
 *.sav
 log/*
 glxMorph.sh
