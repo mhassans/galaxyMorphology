@@ -1,0 +1,30 @@
+/home/mhassans/projects/galaxyMorphology/funcs.py:21: DtypeWarning: Columns (1) have mixed types. Specify dtype option on import or set low_memory=False.
+  features = pd.read_csv('data/features/features.csv')
+1
+12
+13
+14
+142
+142
+143
+144
+145
+146
+147
+148
+149
+1410
+1411
+1412
+1413
+1414
+15
+16
+17
+18
+2
+Time elapsed before training starts:  10.784470796585083  seconds.
+SVC model trained and stored as: trainedModels//model_Quant-alpha0p03-C10000000p0-dataMapFuncNone-interactionYandYZ-weightNone-trainSize40000-testSize10000-foldIdx1-minOfK10.sav
+Storing model on disk took  0.10132384300231934  seconds
+Training took  21351.350358724594  seconds.
+=>> PBS: job killed: walltime 43208 exceeded limit 43200
