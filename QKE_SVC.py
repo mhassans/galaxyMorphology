@@ -3,7 +3,7 @@ import sys
 import os
 from pathlib import Path
 from sklearn.svm import SVC
-import joblib
+#import joblib
 import time
 
 from qiskit.circuit.library import PauliFeatureMap
@@ -74,7 +74,7 @@ class QKE_SVC():
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
         time0 = time.time()
-        joblib.dump(model, filename)
+        #joblib.dump(model, filename)
         print('SVC model trained and stored as:', filename)
         print("Storing model on disk took ", time.time()-time0," seconds")
         return model
