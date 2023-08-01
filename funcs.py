@@ -16,7 +16,8 @@ def fix_ttype_feature(df, Ndigit=5):
     df = df.astype({'TType': 'float'})
     return df
 
-def prepare_dataframe(trainPlusTestSize, minOfK):
+def prepare_dataframe(trainPlusTestSize, minOfK, balancedSampling=False):
+    random_state = 1
     GZ1 = pd.read_csv('data/GalaxyZoo1/GZ1.csv') #Galaxy zoo data from data.galaxyzoo.org (unwanted columns removed)
     features = pd.read_csv('data/features/features.csv') 
                     #from sciencedirect.com/science/article/pii/S2213133719300757 (unwanted columns removed)
@@ -29,7 +30,12 @@ def prepare_dataframe(trainPlusTestSize, minOfK):
     df = df.drop(['Error'], axis=1) 
     df = fix_ttype_feature(df)
     df = df[df['K']>minOfK]
-    df = df.sample(n=trainPlusTestSize, random_state=1)
+    if balancedSampling:
+        sample_spirals = df[df['SPIRAL']==1].sample(n=trainPlusTestSize//2, random_state=random_state)
+        sample_ellipticals = df[df['SPIRAL']==0].sample(n=trainPlusTestSize//2, random_state=random_state)
+        df = pd.concat([sample_spirals, sample_ellipticals])
+    else:
+        df = df.sample(n=trainPlusTestSize, random_state=random_state)
     df = df.reset_index(drop=True)
     return df
 
@@ -79,6 +85,7 @@ def setConfigName(config):
         fileName = 'Quant'
         fileName += '-alpha' + str(config['alpha']).replace('.','p')
         fileName += '-C' + str(config['C_quant']).replace('.','p')
+        fileName += '-entangleType' + config['entangleType']
         fileName += '-dataMapFunc'
         if (config['data_map_func'] == None):
             fileName += 'None'

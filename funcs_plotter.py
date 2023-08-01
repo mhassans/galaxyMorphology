@@ -7,6 +7,7 @@ from sklearn.metrics import confusion_matrix
 import itertools
 import seaborn as sns
 import re
+from pathlib import Path
 
 def double_roc(df1, title1, df2, title2):
     fpr1, tpr1, _ = roc_curve(df1['trueLabels'], df1['scores'])
@@ -265,7 +266,9 @@ def plot_roc_compare(path_quant, path_class):
                 (AUC = {np.mean(auc_score_quant):.3f} $\pm$ {np.std(auc_score_quant):.3f})', color=color_quant)
     plot_roc_curve_custom(mean_fpr_class, mean_tpr_class, f'Classical kernel\
                 (AUC = {np.mean(auc_score_class):.3f} $\pm$ {np.std(auc_score_class):.3f})', color=color_class)
-    plt.title("Train size = " + trainSize_quant + "; K >= " + k_quant)
     plt.legend(loc='lower right')
     plt.show()
-    fig.savefig("Figures/" + 'trainSize' + trainSize_quant + '-K' + k_quant + '.pdf', dpi=300,bbox_inches='tight')
+    figuresPath = 'Figures/'
+    if not Path(figuresPath).exists():
+        Path(figuresPath).mkdir(parents=True)
+    fig.savefig(figuresPath + 'trainSize' + trainSize_quant + '-K' + k_quant + '.pdf', dpi=300,bbox_inches='tight')
