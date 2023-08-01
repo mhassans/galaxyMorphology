@@ -33,6 +33,7 @@ def main(submitToBatch):
         interaction = ['Z', 'YY'],
         circuit_width = 5,
         entangleType = 'linear',
+        RunOnIBMdevice = False,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,

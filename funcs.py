@@ -86,6 +86,7 @@ def setConfigName(config):
         fileName += '-alpha' + str(config['alpha']).replace('.','p')
         fileName += '-C' + str(config['C_quant']).replace('.','p')
         fileName += '-entangleType' + config['entangleType']
+        fileName += '-IBMdevice' if config['RunOnIBMdevice'] else '-Simulation'
         fileName += '-dataMapFunc'
         if (config['data_map_func'] == None):
             fileName += 'None'
