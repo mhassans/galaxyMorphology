@@ -1,23 +1,15 @@
 import time
 start_time = time.time()
-print('1')
 import joblib
-print('12')
 import numpy as np
 from sklearn.metrics import roc_auc_score, f1_score, accuracy_score
-print('13')
 import pandas as pd
-print('14')
 from QKE_SVC import QKE_SVC
-print('15')
 from funcs import prepare_dataframe, get_train_test, normalize_data, setConfigName
-print('16')
 from pathlib import Path
-print('17')
 import sys
-print('18')
 import yaml
-print('2')
+
 try:
     config_file = sys.argv[1]
 except IndexError:
@@ -31,7 +23,7 @@ except EnvironmentError:
     exit()
 fileName = setConfigName(config)
 
-df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'])
+df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'], balancedSampling=config['balancedSampling'])
 train_data, train_labels, test_data, test_labels, train_extraInfo, test_extraInfo \
             = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
 train_data = normalize_data(train_data)
@@ -47,6 +39,9 @@ resultOutputPath = config['resultOutputPath']
 QKE_model = QKE_SVC(config['classical'], 
                     config['class_weight'], 
                     modelSavedPath = modelSavedPath,
+                    entangleType = config['entangleType'],
+                    nShots = config['nShots'],
+                    RunOnIBMdevice = config['RunOnIBMdevice'],
                     gamma = config['gamma'],
                     C_class = config['C_class'],
                     alpha = config['alpha'],

@@ -33,6 +33,11 @@ gamma: auto
 interaction:
 - Z
 - YZ
+entangleType: 'full'
+balancedSampling: false
+nShots: null
+minOfK: 5
+RunOnIBMdevice: false
 load_model: false
 modelSavedPath: trainedModels/
 n_splits: 5

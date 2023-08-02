@@ -1,37 +1,25 @@
-"""
-Use data provided to train and save an svm classifier
-Can use a classicla svm or quantum-enhanced
-STATUS: in dev, job report could be compiled in main
-"""
-print('142')
 import numpy as np
-print('142')
 import sys
-print('143')
 import os
-print('144')
 from pathlib import Path
-print('145')
 from sklearn.svm import SVC
-print('146')
-import joblib
-print('147')
-
-from qiskit import (Aer,IBMQ)
-print('148')
-IBMQ.load_account()
-print('149')
-IBMQ.providers()
-print('1410')
-provider = IBMQ.get_provider(group='open')
-print('1411')
-from qiskit.utils import QuantumInstance
-print('1412')
-from qiskit.circuit.library import PauliFeatureMap
-print('1413')
-from qiskit_machine_learning.kernels import QuantumKernel
-print('1414')
+#import joblib
 import time
+
+from qiskit.circuit.library import PauliFeatureMap
+
+#packages for simulation
+from qiskit_machine_learning.kernels import FidelityStatevectorKernel
+
+#packages for running on a quantum device
+from qiskit.algorithms.state_fidelities import ComputeUncompute
+from qiskit_ibm_runtime import Sampler, QiskitRuntimeService, Options
+from qiskit_machine_learning.kernels import FidelityQuantumKernel
+
+#from qiskit import (Aer,IBMQ)
+#IBMQ.load_account()
+#IBMQ.providers()
+#provider = IBMQ.get_provider(group='open')
 
 class QKE_SVC():
     """
@@ -44,6 +32,9 @@ class QKE_SVC():
                  classical,
                  class_weight, 
                  modelSavedPath,
+                 entangleType,
+                 nShots,
+                 RunOnIBMdevice,
                  gamma = None, 
                  C_class = None, 
                  alpha = None,
@@ -51,24 +42,31 @@ class QKE_SVC():
                  data_map_func = None,
                  interaction = None,
                  circuit_width = None):
-        if classical:
-            self.gamma = gamma
-            self.C_class = C_class
-        else:
-            self.alpha = alpha
-            self.C_quant = C_quant
-            self.data_map_func = data_map_func
-            self.interaction = interaction
-
-            self.backend = QuantumInstance(Aer.get_backend('statevector_simulator'))
-            self.circuit_width = circuit_width
-            featureMap = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interaction, data_map_func=data_map_func, entanglement='full')
-
-            self.kernel = QuantumKernel(feature_map = featureMap, quantum_instance = self.backend)
         self.classical = classical
         self.class_weight = class_weight
         self.modelSavedPath = modelSavedPath
         self.cache_chosen = 1000
+        if classical:
+            self.gamma = gamma
+            self.C_class = C_class
+        else:
+            self.C_quant = C_quant
+            feature_map = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interaction,\
+                                            data_map_func=data_map_func, entanglement=entangleType)        
+            if(RunOnIBMdevice):
+                service = QiskitRuntimeService(channel="ibm_quantum")
+                backend = service.backend("ibmq_manila")
+                options = Options(optimization_level=3, resilience_level=1)
+                sampler = Sampler(session=backend, options=options)
+                fidelity = ComputeUncompute(sampler=sampler)
+                self.kernel = FidelityQuantumKernel(feature_map=feature_map, fidelity=fidelity)
+            else:
+                self.kernel = FidelityStatevectorKernel(feature_map=feature_map, shots=nShots)
+                if nShots is not None:
+                    print('===============\n Note: Ignore ComplexWarning. When nShots is finite, forcing kernel mtx to'+ \
+                           'be semidefinite (which is True by default in FidelityStatevectorKernel) could produce complex'+ \
+                           'values in the matrix. From qiskit doc: "due to truncation and rounding errors we may get'+ \
+                           'complex numbers". So the imaginary values should be small and hence ignored. \n===============')
 
     def train_model(self, train_data, train_labels, fileName):
         if self.classical:
@@ -88,7 +86,7 @@ class QKE_SVC():
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
         time0 = time.time()
-        joblib.dump(model, filename)
+        #joblib.dump(model, filename)
         print('SVC model trained and stored as:', filename)
         print("Storing model on disk took ", time.time()-time0," seconds")
         return model
