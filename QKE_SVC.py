@@ -62,6 +62,11 @@ class QKE_SVC():
                 self.kernel = FidelityQuantumKernel(feature_map=feature_map, fidelity=fidelity)
             else:
                 self.kernel = FidelityStatevectorKernel(feature_map=feature_map, shots=nShots)
+                if nShots is not None:
+                    print('===============\n Note: Ignore ComplexWarning. When nShots is finite, forcing kernel mtx to'+ \
+                           'be semidefinite (which is True by default in FidelityStatevectorKernel) could produce complex'+ \
+                           'values in the matrix. From qiskit doc: "due to truncation and rounding errors we may get'+ \
+                           'complex numbers". So the imaginary values should be small and hence ignored. \n===============')
 
     def train_model(self, train_data, train_labels, fileName):
         if self.classical:

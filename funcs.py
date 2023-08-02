@@ -97,7 +97,7 @@ def setConfigName(config):
         if (config['nShots'] is None):
             fileName += 'None'
         else:
-            fileName += nShots
+            fileName += str(config['nShots'])
         fileName += '-interaction' + 'and'.join(config['interaction'])
     
     fileName += '-weight'
