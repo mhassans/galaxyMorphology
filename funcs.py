@@ -86,12 +86,18 @@ def setConfigName(config):
         fileName += '-alpha' + str(config['alpha']).replace('.','p')
         fileName += '-C' + str(config['C_quant']).replace('.','p')
         fileName += '-entangleType' + config['entangleType']
+        fileName += '-balancedSampling' + str(config['balancedSampling'])
         fileName += '-IBMdevice' if config['RunOnIBMdevice'] else '-Simulation'
         fileName += '-dataMapFunc'
-        if (config['data_map_func'] == None):
+        if (config['data_map_func'] is None):
             fileName += 'None'
         else:
             fileName += config['data_map_func'].__name__
+        fileName += '-nShots'
+        if (config['nShots'] is None):
+            fileName += 'None'
+        else:
+            fileName += nShots
         fileName += '-interaction' + 'and'.join(config['interaction'])
     
     fileName += '-weight'

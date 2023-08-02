@@ -12,13 +12,14 @@ from qiskit.circuit.library import PauliFeatureMap
 from qiskit_machine_learning.kernels import FidelityStatevectorKernel
 
 #packages for running on a quantum device
+from qiskit.algorithms.state_fidelities import ComputeUncompute
+from qiskit_ibm_runtime import Sampler, QiskitRuntimeService, Options
+from qiskit_machine_learning.kernels import FidelityQuantumKernel
 
 #from qiskit import (Aer,IBMQ)
 #IBMQ.load_account()
 #IBMQ.providers()
 #provider = IBMQ.get_provider(group='open')
-#from qiskit.utils import QuantumInstance
-#from qiskit_machine_learning.kernels import QuantumKernel
 
 class QKE_SVC():
     """
@@ -32,6 +33,7 @@ class QKE_SVC():
                  class_weight, 
                  modelSavedPath,
                  entangleType,
+                 nShots,
                  RunOnIBMdevice,
                  gamma = None, 
                  C_class = None, 
@@ -52,9 +54,14 @@ class QKE_SVC():
             feature_map = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interaction,\
                                             data_map_func=data_map_func, entanglement=entangleType)        
             if(RunOnIBMdevice):
-                pass
+                service = QiskitRuntimeService(channel="ibm_quantum")
+                backend = service.backend("ibmq_manila")
+                options = Options(optimization_level=3, resilience_level=1)
+                sampler = Sampler(session=backend, options=options)
+                fidelity = ComputeUncompute(sampler=sampler)
+                self.kernel = FidelityQuantumKernel(feature_map=feature_map, fidelity=fidelity)
             else:
-                self.kernel = FidelityStatevectorKernel(feature_map=feature_map, shots=None)
+                self.kernel = FidelityStatevectorKernel(feature_map=feature_map, shots=nShots)
 
     def train_model(self, train_data, train_labels, fileName):
         if self.classical:

@@ -23,7 +23,7 @@ except EnvironmentError:
     exit()
 fileName = setConfigName(config)
 
-df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'], balancedSampling=False)
+df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'], balancedSampling=config['balancedSampling'])
 train_data, train_labels, test_data, test_labels, train_extraInfo, test_extraInfo \
             = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
 train_data = normalize_data(train_data)
@@ -40,6 +40,7 @@ QKE_model = QKE_SVC(config['classical'],
                     config['class_weight'], 
                     modelSavedPath = modelSavedPath,
                     entangleType = config['entangleType'],
+                    nShots = config['nShots'],
                     RunOnIBMdevice = config['RunOnIBMdevice'],
                     gamma = config['gamma'],
                     C_class = config['C_class'],

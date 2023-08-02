@@ -6,7 +6,7 @@ from funcs import dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_cus
 def run(config, submitToBatch):
     fileName = setConfigName(config)
     filePath = produceConfig(config, fileName)
-    maxRunTime = 500 #in seconds. Only applies when running locally (i.e. not when submitted to the batch)
+    maxRunTime = 500000000 #in seconds. Only applies when running locally (i.e. not when submitted to the batch)
     if (submitToBatch):
         subprocess.run(['qsub', '-v', 'input='+filePath, 'glxMorph.sh'])
     else:
@@ -34,6 +34,8 @@ def main(submitToBatch):
         circuit_width = 5,
         entangleType = 'linear',
         RunOnIBMdevice = False,
+        nShots = None,
+        balancedSampling = False,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,
@@ -43,10 +45,10 @@ def main(submitToBatch):
     )
     #list of configs to iterate over 
     list_minOfK = [5]#[5, 10, 20]
-    list_trainPlusTestSize = [250]#[250, 500, 1000, 2500, 5000, 10000, 25000, 50000]#[25000]
+    list_trainPlusTestSize = [250, 500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
     list_classical = [False] #e.g. [True, False]
     list_weight = [None]#['balanced'] #e.g. [None, 'balanced']
-    list_fold_idx = [0]#list(range(config['n_splits'])) # run over all folds
+    list_fold_idx = list(range(config['n_splits'])) # run over all folds
     
     #Classical-only lists to iterate over
     list_C_class = [1.0e+7]#[100, 1000, 1.0e+4, 1.0e+5, 1.0e+6, 1.0e+7, 1.0e+8]
@@ -92,5 +94,5 @@ def main(submitToBatch):
                                             run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = False
+    submitToBatch = True
     main(submitToBatch)
