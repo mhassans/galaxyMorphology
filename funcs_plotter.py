@@ -210,7 +210,7 @@ def plot_roc_curve_custom(fpr, tpr, label=None, color='b', alpha=1):
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
 
-def plot_roc_compare(path_quant, path_class):
+def plot_roc_compare(path_quant, path_class, saveFig=False):
     n_fold = 5
     mean_fpr_quant = np.linspace(0, 1, 100)
     mean_tpr_quant = 0
@@ -268,7 +268,8 @@ def plot_roc_compare(path_quant, path_class):
                 (AUC = {np.mean(auc_score_class):.3f} $\pm$ {np.std(auc_score_class):.3f})', color=color_class)
     plt.legend(loc='lower right')
     plt.show()
-    figuresPath = 'Figures/'
-    if not Path(figuresPath).exists():
-        Path(figuresPath).mkdir(parents=True)
-    fig.savefig(figuresPath + 'trainSize' + trainSize_quant + '-K' + k_quant + '.pdf', dpi=300,bbox_inches='tight')
+    if saveFig:
+        figuresPath = 'Figures/'
+        if not Path(figuresPath).exists():
+            Path(figuresPath).mkdir(parents=True)
+        fig.savefig(figuresPath + 'trainSize' + trainSize_quant + '-K' + k_quant + '.pdf', dpi=300,bbox_inches='tight')
