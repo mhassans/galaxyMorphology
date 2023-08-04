@@ -34,7 +34,7 @@ def main(submitToBatch):
         entangleType = 'linear',
         RunOnIBMdevice = False,
         nShots = None,
-        balancedSampling = True,
+        balancedSampling = False,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,

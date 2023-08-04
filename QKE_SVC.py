@@ -99,4 +99,6 @@ class QKE_SVC():
             self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName)
 
     def test(self, test_data):
-        return self.model.predict(test_data), self.model.decision_function(test_data)
+        decFunc = self.model.decision_function(test_data)
+        predicts = (decFunc > 0).astype(int) #instead of using self.model.predict(test_data).
+        return predicts, decFunc
