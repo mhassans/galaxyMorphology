@@ -210,8 +210,7 @@ def plot_roc_curve_custom(fpr, tpr, label=None, color='b', alpha=1):
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
 
-def plot_roc_compare(path_quant, path_class, saveFig=False):
-    n_fold = 5
+def plot_roc_compare(path_quant, path_class, n_fold=5, saveFig=False):
     mean_fpr_quant = np.linspace(0, 1, 100)
     mean_tpr_quant = 0
     mean_fpr_class = np.linspace(0, 1, 100)
