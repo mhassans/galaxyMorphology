@@ -32,11 +32,11 @@ def main(submitToBatch):
         interaction = ['Z', 'YY'],
         circuit_width = 5,
         entangleType = 'linear',
-        RunOnIBMdevice = False,
-        nShots = None,
-        balancedSampling = False,
+        RunOnIBMdevice = True,
+        nShots = 20000,
+        balancedSampling = True,
         trainPlusTestSize = 125,
-        n_splits = 5,
+        n_splits = 4,
         fold_idx = 0,
         minOfK = 5,
         modelSavedPath = 'trainedModels/',
@@ -44,7 +44,7 @@ def main(submitToBatch):
     )
     #list of configs to iterate over 
     list_minOfK = [5]#[5, 10, 20]
-    list_trainPlusTestSize = [20]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
+    list_trainPlusTestSize = [100]#[56]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
     list_classical = [False] #e.g. [True, False]
     list_weight = [None]#['balanced'] #e.g. [None, 'balanced']
     list_fold_idx = [0]#list(range(config['n_splits'])) # run over all folds
