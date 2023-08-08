@@ -16,11 +16,6 @@ from qiskit.algorithms.state_fidelities import ComputeUncompute
 from qiskit_ibm_runtime import Sampler, QiskitRuntimeService, Options
 from qiskit_machine_learning.kernels import FidelityQuantumKernel
 
-#from qiskit import (Aer,IBMQ)
-#IBMQ.load_account()
-#IBMQ.providers()
-#provider = IBMQ.get_provider(group='open')
-
 class QKE_SVC():
     """
     Defines an SVC classifier model family - either classical or quantum-enhanced.
@@ -42,6 +37,18 @@ class QKE_SVC():
                  data_map_func = None,
                  interaction = None,
                  circuit_width = None):
+        def getOptions(numShots, layout):
+            """
+            Used when running on a real device. Creates an Options() instance, adds properties, and returns it.
+            """
+            options = Options()
+            options.optimization_level = 3 #Error suppression. 3 is the highest optimisation level (and the default)
+            options.resilience_level = 1 #Error mitigation. 3 is the highest but Sampler supports up to 1.
+            options.transpilation.initial_layout = layout #List of physical qubits for mapping virtual qubits to them. 
+                                                                #e.g. [6,13] means 0->6 & 1->13, where the RHS show physical qubits.
+            if numShots is not None:
+                options.execution.shots = numShots #When None, the default (4000) is used.
+            return options
         self.classical = classical
         self.class_weight = class_weight
         self.modelSavedPath = modelSavedPath
@@ -55,8 +62,9 @@ class QKE_SVC():
                                             data_map_func=data_map_func, entanglement=entangleType)        
             if(RunOnIBMdevice):
                 service = QiskitRuntimeService(channel="ibm_quantum")
-                backend = service.backend("ibmq_manila")
-                options = Options(optimization_level=3, resilience_level=1)
+                backend = service.backend("ibm_nairobi")
+                layout = [0,1,3,5,6] # List of physical qubits for mapping virtual qubits to them.
+                options = getOptions(nShots, layout)
                 sampler = Sampler(session=backend, options=options)
                 fidelity = ComputeUncompute(sampler=sampler)
                 self.kernel = FidelityQuantumKernel(feature_map=feature_map, fidelity=fidelity)
@@ -86,7 +94,7 @@ class QKE_SVC():
         if not Path(self.modelSavedPath).exists():
             Path(self.modelSavedPath).mkdir(parents=True)
         time0 = time.time()
-        #joblib.dump(model, filename)
+        #joblib.dump(model, filename) #FIXME: Uncomment it. Currently gives error and does not save the model.
         print('SVC model trained and stored as:', filename)
         print("Storing model on disk took ", time.time()-time0," seconds")
         return model
@@ -100,5 +108,5 @@ class QKE_SVC():
 
     def test(self, test_data):
         decFunc = self.model.decision_function(test_data)
-        predicts = (decFunc > 0).astype(int) #instead of using self.model.predict(test_data).
+        predicts = (decFunc > 0).astype(int) #instead of self.model.predict(test_data) -> more efficient coding for quantum device.
         return predicts, decFunc
