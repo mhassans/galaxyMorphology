@@ -39,7 +39,8 @@ nShots: null
 minOfK: 5
 RunOnIBMdevice: false
 load_model: false
-modelSavedPath: trainedModels/
+savedModelPath: trainedModels/
+savedKernelPath: kernels/
 n_splits: 5
 resultOutputPath: output/
 trainPlusTestSize: 1250

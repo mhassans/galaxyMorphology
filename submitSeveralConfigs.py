@@ -39,7 +39,8 @@ def main(submitToBatch):
         n_splits = 4,
         fold_idx = 0,
         minOfK = 5,
-        modelSavedPath = 'trainedModels/',
+        savedModelPath = 'trainedModels/',
+        savedKernelPath = 'kernels/',
         resultOutputPath = 'output/'
     )
     #list of configs to iterate over 

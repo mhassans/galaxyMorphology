@@ -5,6 +5,7 @@ from pathlib import Path
 from sklearn.svm import SVC
 #import joblib
 import time
+import pickle
 
 from qiskit.circuit.library import PauliFeatureMap
 
@@ -26,7 +27,8 @@ class QKE_SVC():
     def __init__(self,
                  classical,
                  class_weight, 
-                 modelSavedPath,
+                 savedModelPath,
+                 savedKernelPath,
                  entangleType,
                  nShots,
                  RunOnIBMdevice,
@@ -51,7 +53,8 @@ class QKE_SVC():
             return options
         self.classical = classical
         self.class_weight = class_weight
-        self.modelSavedPath = modelSavedPath
+        self.savedModelPath = savedModelPath
+        self.savedKernelPath = savedKernelPath
         self.cache_chosen = 1000
         if classical:
             self.gamma = gamma
@@ -76,35 +79,62 @@ class QKE_SVC():
                            'values in the matrix. From qiskit doc: "due to truncation and rounding errors we may get'+ \
                            'complex numbers". So the imaginary values should be small and hence ignored. \n===============')
 
-    def train_model(self, train_data, train_labels, fileName):
+    
+    def compute_kernels(self, train_data, test_data, train_labels, test_labels, fileName):
+        kernelDict = {}
+        kernelDict['train_labels'] = train_labels
+        kernelDict['test_labels'] = test_labels
+        print('Computing kernel matrix for train data:')
+        kernelMtxTrain = self.kernel.evaluate(x_vec=train_data)
+        print('Computing kernel matrix for test data:')
+        kernelMtxTest = self.kernel.evaluate(x_vec=train_data, y_vec=test_data)
+        kernelDict['kernelMtxTrain'] = kernelMtxTrain
+        kernelDict['kernelMtxTest'] = kernelMtxTest
+        print('Saving Kernels')
+        #Adding time.time() to the name to produce a unique name. Helpful for later when circuits with low number of shots are merged.
+        fullFileName = self.savedKernelPath + '/kernel_'+fileName+str(time.time()).replace('.','')+'.pkl' 
+        if not Path(self.savedKernelPath).exists():
+            Path(self.savedKernelPath).mkdir(parents=True)
+        with open(fullFileName, 'wb') as f:
+            pickle.dump(kernelDict, f)
+        
+    def train_model(self, train_data, train_labels, fileName, precompQuantKernel=False):
         if self.classical:
             model = SVC(kernel = 'rbf', 
                         gamma = self.gamma,
                         C = self.C_class,
                         cache_size = self.cache_chosen,
                         class_weight = self.class_weight)
-        else:
+            model.fit(train_data, train_labels)
+        elif not precompQuantKernel:
             model = SVC(kernel = self.kernel.evaluate,
                         C = self.C_quant,
                         cache_size = self.cache_chosen,
                         class_weight = self.class_weight)
-        model.fit(train_data, train_labels)
+            model.fit(train_data, train_labels)
+        else:
+            model = SVC(kernel = 'precomputed',
+                        C = self.C_quant,
+                        cache_size = self.cache_chosen,
+                        class_weight = self.class_weight)
+
+            model.fit(getTrainMtx(fileName), train_labels)
         #save fitted SVC model
-        filename = self.modelSavedPath + '/model_'+fileName+'.sav'
-        if not Path(self.modelSavedPath).exists():
-            Path(self.modelSavedPath).mkdir(parents=True)
+        filename = self.savedModelPath + '/model_'+fileName+'.sav'
+        if not Path(self.savedModelPath).exists():
+            Path(self.savedModelPath).mkdir(parents=True)
         time0 = time.time()
         #joblib.dump(model, filename) #FIXME: Uncomment it. Currently gives error and does not save the model.
         print('SVC model trained and stored as:', filename)
         print("Storing model on disk took ", time.time()-time0," seconds")
         return model
 
-    def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None):
+    def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None, precompQuantKernel=False):
         if load:
             self.model = model
             print('model has been loaded, model: ', self.model)
         else:
-            self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName)
+            self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName, precompQuantKernel=False)
 
     def test(self, test_data):
         decFunc = self.model.decision_function(test_data)

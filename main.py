@@ -33,12 +33,14 @@ if not (config['circuit_width'] == n_features):
     raise AssertionError('Number of feautures is: ', n_features, '.',
     ' Feature dimension expected: ', config['circuit_width'],'.')
 
-modelSavedPath = config['modelSavedPath']
+savedModelPath = config['savedModelPath']
+savedKernelPath = config['savedKernelPath']
 resultOutputPath = config['resultOutputPath']
 
 QKE_model = QKE_SVC(config['classical'], 
                     config['class_weight'], 
-                    modelSavedPath = modelSavedPath,
+                    savedModelPath = savedModelPath,
+                    savedKernelPath = savedKernelPath,
                     entangleType = config['entangleType'],
                     nShots = config['nShots'],
                     RunOnIBMdevice = config['RunOnIBMdevice'],
@@ -59,11 +61,12 @@ if config['load_model'] == False:
     QKE_model.set_model(load = False, 
                         train_data = train_data,
                         train_labels = train_labels, 
-                        fileName = fileName
+                        fileName = fileName,
+                        precompQuantKernel = config['precompQuantKernel']
                        )
 else:
     #load_model
-    modelName = modelSavedPath+'/model_'+fileName+'.sav'
+    modelName = savedModelPath+'/model_'+fileName+'.sav'
     model = joblib.load(modelName)
     print('Model ' + modelName + ' loaded!')
     QKE_model.set_model(load = True, model = model)
@@ -72,7 +75,7 @@ timeStampAfterTrainingTime = time.time()
 print("Training took ", timeStampAfterTrainingTime - timeStampBeforeTraining, " seconds.")
     
 #test
-model_predictions, model_scores = QKE_model.test(test_data)
+model_predictions, model_scores = QKE_model.test(test_data, precompQuantKernel=config['precompQuantKernel'])
 
 timeStampAfterTesting = time.time()
 print("Applying model to test set took ", timeStampAfterTesting - timeStampAfterTrainingTime, " seconds.")

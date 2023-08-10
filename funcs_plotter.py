@@ -9,6 +9,27 @@ import seaborn as sns
 import re
 from pathlib import Path
 
+def multi_roc(dataframes, titles, colors):
+    plt.figure(figsize=(10, 7))
+    
+    for i, df in enumerate(dataframes):
+        trueLabels = df["trueLabels"]
+        scores = df["scores"]
+        
+        fpr, tpr, _ = roc_curve(trueLabels, scores)
+        roc_auc = auc(fpr, tpr)
+        
+        plt.plot(fpr, tpr, color=colors[i], label=titles[i] + f' (AUC = {roc_auc:.2f})')
+    
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('')
+    plt.legend(loc='lower right')
+    plt.show()
+
 def double_roc(df1, title1, df2, title2):
     fpr1, tpr1, _ = roc_curve(df1['trueLabels'], df1['scores'])
     roc_auc1 = auc(fpr1, tpr1)
