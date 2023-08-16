@@ -62,8 +62,8 @@ class QKE_SVC():
                                             data_map_func=data_map_func, entanglement=entangleType)        
             if(RunOnIBMdevice):
                 service = QiskitRuntimeService(channel="ibm_quantum")
-                backend = service.backend("ibm_nairobi")
-                layout = [0,1,3,5,6] # List of physical qubits for mapping virtual qubits to them.
+                backend = service.backend("ibmq_manila")#"ibm_nairobi")
+                layout = [0,1,2,3,4]#[0,1,3,5,6] # List of physical qubits for mapping virtual qubits to them.
                 options = getOptions(nShots, layout)
                 sampler = Sampler(session=backend, options=options)
                 fidelity = ComputeUncompute(sampler=sampler)
