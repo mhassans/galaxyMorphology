@@ -80,7 +80,10 @@ class QKE_SVC():
                            'complex numbers". So the imaginary values should be small and hence ignored. \n===============')
 
     
-    def compute_kernels(self, train_data, test_data, train_labels, test_labels, fileName):
+    def calc_train_kernel(self, train_data, fileName):
+        print('Computing kernel matrix for train data:')
+        self.kernelMtxTrain = self.kernel.evaluate(x_vec=train_data)
+    def calc_train_kernel(self, train_data, fileName):
         kernelDict = {}
         kernelDict['train_labels'] = train_labels
         kernelDict['test_labels'] = test_labels
@@ -98,17 +101,11 @@ class QKE_SVC():
         with open(fullFileName, 'wb') as f:
             pickle.dump(kernelDict, f)
         
-    def train_model(self, train_data, train_labels, fileName, precompQuantKernel=False):
+    def train_model(self, train_data, train_labels, fileName):
         if self.classical:
             model = SVC(kernel = 'rbf', 
                         gamma = self.gamma,
                         C = self.C_class,
-                        cache_size = self.cache_chosen,
-                        class_weight = self.class_weight)
-            model.fit(train_data, train_labels)
-        elif not precompQuantKernel:
-            model = SVC(kernel = self.kernel.evaluate,
-                        C = self.C_quant,
                         cache_size = self.cache_chosen,
                         class_weight = self.class_weight)
             model.fit(train_data, train_labels)
@@ -117,7 +114,7 @@ class QKE_SVC():
                         C = self.C_quant,
                         cache_size = self.cache_chosen,
                         class_weight = self.class_weight)
-
+            calc_train_kernel()
             model.fit(getTrainMtx(fileName), train_labels)
         #save fitted SVC model
         filename = self.savedModelPath + '/model_'+fileName+'.sav'
@@ -129,12 +126,12 @@ class QKE_SVC():
         print("Storing model on disk took ", time.time()-time0," seconds")
         return model
 
-    def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None, precompQuantKernel=False):
+    def set_model(self, load, model = None, train_data = None, train_labels = None, fileName = None):
         if load:
             self.model = model
             print('model has been loaded, model: ', self.model)
         else:
-            self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName, precompQuantKernel=False)
+            self.model = self.train_model(train_data = train_data, train_labels = train_labels, fileName = fileName)
 
     def test(self, test_data):
         decFunc = self.model.decision_function(test_data)
