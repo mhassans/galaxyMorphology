@@ -42,5 +42,10 @@ load_model: false
 modelSavedPath: trainedModels/
 n_splits: 5
 resultOutputPath: output/
+logPath: log/
+subDir: ''
+excludedFeatures:
+- G2
+- S
+- A
 trainPlusTestSize: 1250
-

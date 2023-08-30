@@ -23,18 +23,25 @@ except EnvironmentError:
     exit()
 fileName = setConfigName(config)
 
-df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'], balancedSampling=config['balancedSampling'])
+availableFeatures = ['C', 'H', 'G2', 'S', 'A']#all available features in the datasets
+excludedFeatures = config['excludedFeatures']#List of Features excluded from training. If empty, all features used.
+usedFeatures = [ftr for ftr in availableFeatures if ftr not in excludedFeatures]
+signalLabel = 'SPIRAL'
+
+df = prepare_dataframe(trainPlusTestSize=config['trainPlusTestSize'], minOfK=config['minOfK'], signalLabel=signalLabel,\
+                       excludedFeatures=excludedFeatures, balancedSampling=config['balancedSampling'])
 train_data, train_labels, test_data, test_labels, train_extraInfo, test_extraInfo \
-            = get_train_test(df, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
+            = get_train_test(df, signalLabel, usedFeatures, n_splits=config['n_splits'], fold_idx=config['fold_idx'])
 train_data = normalize_data(train_data)
 test_data = normalize_data(test_data)
+print('train_head\n', train_data.head())
 n_features = np.shape(train_data)[1]
 if not (config['circuit_width'] == n_features):
     raise AssertionError('Number of feautures is: ', n_features, '.',
     ' Feature dimension expected: ', config['circuit_width'],'.')
 
-modelSavedPath = config['modelSavedPath']
-resultOutputPath = config['resultOutputPath']
+modelSavedPath = config['modelSavedPath'] + '/' + config['subDir'] + '/'
+resultOutputPath = config['resultOutputPath'] + '/' + config['subDir'] + '/'
 
 QKE_model = QKE_SVC(config['classical'], 
                     config['class_weight'], 

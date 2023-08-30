@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.model_selection import KFold
 from functools import reduce
 import numpy as np
+from pathlib import Path
 
 def fix_ttype_feature(df, Ndigit=5):
     """
@@ -16,7 +17,7 @@ def fix_ttype_feature(df, Ndigit=5):
     df = df.astype({'TType': 'float'})
     return df
 
-def prepare_dataframe(trainPlusTestSize, minOfK, balancedSampling=False):
+def prepare_dataframe(trainPlusTestSize, minOfK, signalLabel, excludedFeatures=[], balancedSampling=False):
     random_state = 1
     GZ1 = pd.read_csv('data/GalaxyZoo1/GZ1.csv') #Galaxy zoo data from data.galaxyzoo.org (unwanted columns removed)
     features = pd.read_csv('data/features/features.csv') 
@@ -28,18 +29,19 @@ def prepare_dataframe(trainPlusTestSize, minOfK, balancedSampling=False):
     df = df[df.Error==0] #Keep successful CyMorph processes only. See kaggle.com/datasets/saurabhshahane/galaxy-classification
     df = df[(df['G2']>-6000) & (df['S']>-6000) & (df['A']>-6000) & (df['C']>-6000)] #discard outliers
     df = df.drop(['Error'], axis=1) 
+    df = df.drop(excludedFeatures, axis=1) 
     df = fix_ttype_feature(df)
     df = df[df['K']>minOfK]
     if balancedSampling:
-        sample_spirals = df[df['SPIRAL']==1].sample(n=trainPlusTestSize//2, random_state=random_state)
-        sample_ellipticals = df[df['SPIRAL']==0].sample(n=trainPlusTestSize//2, random_state=random_state)
-        df = pd.concat([sample_spirals, sample_ellipticals])
+        sample_signal = df[df[signalLabel]==1].sample(n=trainPlusTestSize//2, random_state=random_state)
+        sample_bkg = df[df[signalLabel]==0].sample(n=trainPlusTestSize//2, random_state=random_state)
+        df = pd.concat([sample_signal, sample_bkg])
     else:
         df = df.sample(n=trainPlusTestSize, random_state=random_state)
     df = df.reset_index(drop=True)
     return df
 
-def get_train_test(df, n_splits=5, fold_idx=0):
+def get_train_test(df, signalLabel, usedFeatures, n_splits=5, fold_idx=0):
     if fold_idx>=n_splits:
         print("ERROR: Fold index must be between 0 and n_splits-1.")
         exit()
@@ -48,14 +50,12 @@ def get_train_test(df, n_splits=5, fold_idx=0):
     train_id, test_id = indices[fold_idx]
     train = df.iloc[train_id]
     test = df.iloc[test_id]
-    features = ['C','A','S','H','G2']
-    labels = 'SPIRAL'
     extraInfo = ['OBJID', 'TType','K']
-    train_data = train[features]
-    train_labels = train[labels]
+    train_data = train[usedFeatures]
+    train_labels = train[signalLabel]
     train_extraInfo = train[extraInfo]
-    test_data = test[features]
-    test_labels = test[labels]
+    test_data = test[usedFeatures]
+    test_labels = test[signalLabel]
     test_extraInfo = test[extraInfo]
     return train_data, train_labels, test_data, test_labels, train_extraInfo, test_extraInfo
 
@@ -68,7 +68,10 @@ def makeOutputFileName(classical, trainSize):
     return fileName
 
 def produceConfig(config, fileName):
-    filePath = 'config/autoConfigs_'+fileName+'.yaml'
+    confPath = 'config/'+ config['subDir'] + '/'
+    if not Path(confPath).exists():
+        Path(confPath).mkdir(parents=True)
+    filePath = confPath+'autoConfigs_'+fileName+'.yaml'
     with open(filePath, 'w') as outfile:
         yaml.dump(config, outfile, default_flow_style=False)
     print('The following config file was produced:')
