@@ -34,7 +34,7 @@ def main(submitToBatch):
         C_quant = 1.0e+6,
         data_map_func = None,
         interaction = ['Z', 'YY'],
-        circuit_width = 2,
+        circuit_width = 5,
         entangleType = 'linear',
         RunOnIBMdevice = False,
         nShots = 20000,
@@ -46,12 +46,12 @@ def main(submitToBatch):
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/',
         logPath = 'log/',
-        subDir = 'expConcentration/CandH/XY/', #''
-        excludedFeatures = ['G2', 'S', 'A']
+        subDir = 'testing/', #''
+        excludedFeatures = []
     )
     #list of configs to iterate over 
     list_minOfK = [5]#[5, 10, 20]
-    list_trainPlusTestSize = [25000]#[56]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
+    list_trainPlusTestSize = [100]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
     list_classical = [False] #e.g. [True, False]
     list_weight = [None] #class weights, e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
@@ -69,8 +69,8 @@ def main(submitToBatch):
     list_alpha = [0.03]#[0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.13, 0.5]
     list_C_quant = [1.0e+7]#[1000, 1.0e+5]#[10, 1000, 1.0e+5, 1.0e+6]
     list_data_map_func = [None]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4]
-    list_interaction = [['XY']] #[['Y', 'YZ']] #a subset of singleThenTwoQubitInt
-    list_nShots = [4000, 20000, 60000, 100000, 200000, None]
+    list_interaction = [['Y', 'YZ']] #a subset of singleThenTwoQubitInt
+    list_nShots = [None]#[4000, 8000, 16000, 32000, 64000, 128000, None]
    
     for nShot in list_nShots:
         config['nShots'] = nShot
@@ -103,5 +103,5 @@ def main(submitToBatch):
                                                 run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = True
+    submitToBatch = False
     main(submitToBatch)
