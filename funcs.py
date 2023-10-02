@@ -176,3 +176,39 @@ def dataMap_custom3(x):
 def dataMap_custom4(x):
     coeff = x[0] if len(x) == 1 else (1 - dataMap_custom3(x))
     return coeff
+
+def get_corr(i, j, method='pearson'):
+    """
+    Correlation between features in galaxy data. Hard-coded now; should be cleaned later. 
+    All 5 galaxy features must be present, sorted by ['C', 'H', 'G2', 'S', 'A'].
+    corr is the correlation between features.
+    """
+    corr_pearson = np.array([
+                             [ 1.        , -0.65134493, -0.58424253, -0.51686424,  0.23973728],
+                             [-0.65134493,  1.        ,  0.9213353 ,  0.67520741, -0.20136038],
+                             [-0.58424253,  0.9213353 ,  1.        ,  0.69492266, -0.15698898],
+                             [-0.51686424,  0.67520741,  0.69492266,  1.        ,  0.05297785],
+                             [ 0.23973728, -0.20136038, -0.15698898,  0.05297785,  1.        ]
+                           ]) 
+    corr_kendall = np.array([
+                             [ 1.        , -0.48515647, -0.41004319, -0.33879072,  0.15136111],
+                             [-0.48515647,  1.        ,  0.80436534,  0.35744024, -0.16003525],
+                             [-0.41004319,  0.80436534,  1.        ,  0.30361616, -0.11764175],
+                             [-0.33879072,  0.35744024,  0.30361616,  1.        ,  0.10885891],
+                             [ 0.15136111, -0.16003525, -0.11764175,  0.10885891,  1.        ]
+                           ])
+    corr_spearman = np.array([
+                              [ 1.        , -0.66689428, -0.58026856, -0.4882942 ,  0.23331018],
+                              [-0.66689428,  1.        ,  0.94097503,  0.50798079, -0.24263426],
+                              [-0.58026856,  0.94097503,  1.        ,  0.44270187, -0.17903032],
+                              [-0.4882942 ,  0.50798079,  0.44270187,  1.        ,  0.16497113],
+                              [ 0.23331018, -0.24263426, -0.17903032,  0.16497113,  1.        ]
+                            ])
+    if method == 'pearson':
+        return corr_pearson[i,j]
+    elif method == 'kendall':
+        return corr_kendall[i,j]
+    elif method == 'spearman':
+        return corr_spearman[i,j]
+    else:
+        raise valueError("Method for calculating correlation not found")

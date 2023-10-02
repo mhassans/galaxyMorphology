@@ -35,10 +35,10 @@ def main(submitToBatch):
         data_map_func = None,
         interaction = ['Z', 'YY'],
         circuit_width = 5,
-        entangleType = 'linear',
+        entangleType = 'full',
         RunOnIBMdevice = False,
         nShots = 20000,
-        balancedSampling = True,
+        balancedSampling = False,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,
@@ -46,12 +46,13 @@ def main(submitToBatch):
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/',
         logPath = 'log/',
-        subDir = 'testing/', #''
-        excludedFeatures = []
+        subDir = 'CorrelationKernel/spearman/', #''
+        excludedFeatures = [],
+        corrMethod = 'spearman'
     )
     #list of configs to iterate over 
     list_minOfK = [5]#[5, 10, 20]
-    list_trainPlusTestSize = [100]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
+    list_trainPlusTestSize = [25000]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
     list_classical = [False] #e.g. [True, False]
     list_weight = [None] #class weights, e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
@@ -103,5 +104,5 @@ def main(submitToBatch):
                                                 run(config, submitToBatch) #run
 
 if __name__ == "__main__":
-    submitToBatch = False
+    submitToBatch = True
     main(submitToBatch)
