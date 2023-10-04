@@ -30,7 +30,8 @@ def main(submitToBatch):
         classical = False,
         gamma = 'auto',
         C_class = 1.0e+6,
-        alpha = 0.1,
+        alpha = 0.03,
+        alphaCorr = 0.03,
         C_quant = 1.0e+6,
         data_map_func = None,
         interaction = ['Z', 'YY'],
@@ -46,9 +47,9 @@ def main(submitToBatch):
         modelSavedPath = 'trainedModels/',
         resultOutputPath = 'output/',
         logPath = 'log/',
-        subDir = 'CorrelationKernel/spearman/', #''
+        subDir = 'CorrelationKernel/pearson/', #''
         excludedFeatures = [],
-        corrMethod = 'spearman'
+        corrMethod = 'pearson'
     )
     #list of configs to iterate over 
     list_minOfK = [5]#[5, 10, 20]
@@ -67,8 +68,9 @@ def main(submitToBatch):
     #singleThenTwoQubitInt = [[a,b] for a in singleQubitInt for b in twoQubitInt] # create this list: [['X', 'XX'], ['X','XY'], ...]
     
     #Quantum-only lists to iterate over
-    list_alpha = [0.03]#[0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.13, 0.5]
-    list_C_quant = [1.0e+7]#[1000, 1.0e+5]#[10, 1000, 1.0e+5, 1.0e+6]
+    list_alpha = [0.01, 0.03]#[0.03]#[0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.13, 0.5]
+    list_alphaCorr = [0.0001, 0.001, 0.01, 0.1, 1]#[0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.13, 0.5]
+    list_C_quant = [1000, 1.0e+7]#[1.0e+7]#[1000, 1.0e+5]#[10, 1000, 1.0e+5, 1.0e+6]
     list_data_map_func = [None]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4]
     list_interaction = [['Y', 'YZ']] #a subset of singleThenTwoQubitInt
     list_nShots = [None]#[4000, 8000, 16000, 32000, 64000, 128000, None]
@@ -95,13 +97,15 @@ def main(submitToBatch):
                             else:
                                 for alpha in list_alpha:
                                     config['alpha'] = alpha
-                                    for CQuant in list_C_quant:
-                                        config['C_quant'] = CQuant
-                                        for data_map_func in list_data_map_func:
-                                            config['data_map_func'] = data_map_func
-                                            for interaction in list_interaction:
-                                                config['interaction'] = interaction
-                                                run(config, submitToBatch) #run
+                                    for alphaCorr in list_alphaCorr:
+                                        config['alphaCorr'] = alphaCorr
+                                        for CQuant in list_C_quant:
+                                            config['C_quant'] = CQuant
+                                            for data_map_func in list_data_map_func:
+                                                config['data_map_func'] = data_map_func
+                                                for interaction in list_interaction:
+                                                    config['interaction'] = interaction
+                                                    run(config, submitToBatch) #run
 
 if __name__ == "__main__":
     submitToBatch = True

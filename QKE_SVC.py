@@ -36,6 +36,7 @@ class QKE_SVC():
                  gamma = None, 
                  C_class = None, 
                  alpha = None,
+                 alphaCorr = None,
                  C_quant = None,
                  data_map_func = None,
                  interaction = None,
@@ -52,18 +53,18 @@ class QKE_SVC():
             if numShots is not None:
                 options.execution.shots = numShots #When None, the default (4000) is used.
             return options
-        def corr_circ_pair(corr=0.0, alpha=0.03):
+        def corr_circ_pair(corr=0.0, alphaCorr=0.03):
             """
-            circuit for implementing correlation between pair of feautures given their correlation and rotation factor alpha. 
-            The actual circuit is exp(alpha*corr*ZZ), where ZZ applies on the two qubit in the pair.
+            circuit for implementing correlation between pair of feautures given their correlation and rotation factor alphaCorr. 
+            The actual circuit is exp(alphaCorr*corr*ZZ), where ZZ applies on the two qubit in the pair.
             """
             circ = QuantumCircuit(2)
             circ.cx(0,1)
-            circ.p(alpha*corr, 1)
+            circ.p(alphaCorr*corr, 1)
             circ.cx(0,1)
             #circ.barrier()    
             return circ
-        def add_corr(main_circuit, entanglement='full', method='pearson'):
+        def add_corr(main_circuit, alphaCorr, entanglement='full', method='pearson'):
             """
             Gets main_circuit and adds corr_circ_pair between each pair of qubits before main_circuit
             """
@@ -71,10 +72,10 @@ class QKE_SVC():
             if entanglement=='full':
                 for i in reversed(range(len(indices))):
                     for j in reversed(range(i + 1, len(indices))):
-                        main_circuit = main_circuit.compose(corr_circ_pair(corr=get_corr(i, j, method=method)), qubits=[i,j], front=True)
+                        main_circuit = main_circuit.compose(corr_circ_pair(corr=get_corr(i, j, method=method), alphaCorr=alphaCorr), qubits=[i,j], front=True)
             elif entanglement=='linear':
                 for i in reversed(range(len(indices)-1)):
-                    main_circuit = main_circuit.compose(corr_circ_pair(corr=get_corr(i, i+1, method=method)), qubits=[i,i+1], front=True)
+                    main_circuit = main_circuit.compose(corr_circ_pair(corr=get_corr(i, i+1, method=method), alphaCorr=alphaCorr), qubits=[i,i+1], front=True)
             else:
                 raise ValueError("entanglement must be 'full' or 'linear'")
             h_layer = QuantumCircuit(len(indices))
@@ -92,7 +93,7 @@ class QKE_SVC():
             self.C_quant = C_quant
             pauliMap = PauliFeatureMap(circuit_width, alpha=alpha, paulis=interaction,\
                                             data_map_func=data_map_func, entanglement=entangleType)
-            feature_map = add_corr(pauliMap, entanglement=entangleType, method=corrMethod)
+            feature_map = add_corr(pauliMap, alphaCorr=alphaCorr, entanglement=entangleType, method=corrMethod)
             if(RunOnIBMdevice):
                 service = QiskitRuntimeService(channel="ibm_quantum")
                 backend = service.backend("ibmq_manila")#"ibm_nairobi")

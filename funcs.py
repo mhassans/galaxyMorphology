@@ -87,6 +87,7 @@ def setConfigName(config):
     else:
         fileName = 'Quant'
         fileName += '-alpha' + str(config['alpha']).replace('.','p')
+        fileName += '-alphaCorr' + str(config['alphaCorr']).replace('.','p')
         fileName += '-C' + str(config['C_quant']).replace('.','p')
         fileName += '-entangleType' + config['entangleType']
         fileName += '-balancedSampling' + str(config['balancedSampling'])
