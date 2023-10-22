@@ -1,0 +1,22 @@
+/unix/qcomp/users/mohammad/projects/galaxyMorphology/funcs.py:23: DtypeWarning: Columns (1) have mixed types. Specify dtype option on import or set low_memory=False.
+  features = pd.read_csv('data/features/features.csv')
+train_head
+           C         H        G2         S         A
+1  0.308113  0.865212  0.867190  0.935268  0.854710
+3  0.396657  0.891382  0.894090  0.796745  0.738654
+5  0.474807  0.653655  0.544523  0.865936  0.901720
+6  0.403116  0.747119  0.729846  0.897818  0.944830
+7  0.534336  0.751479  0.697604  0.949620  0.881822
+Time elapsed before training starts:  5.258994817733765  seconds.
+SVC model trained and stored as: trainedModels//CorrelationKernel/pearson///model_Quant-alpha0p01-alphaCorr0p001-C10000000p0-entangleTypefull-balancedSamplingFalse-Simulation-dataMapFuncNone-nShotsNone-interactionYandYZ-weightNone-trainSize20000-testSize5000-foldIdx0-minOfK5.sav
+Storing model on disk took  6.008148193359375e-05  seconds
+Training took  2988.2218306064606  seconds.
+Applying model to test set took  990.0852122306824  seconds.
+Adding results to dataframe took  0.0022499561309814453  seconds.
+Result from applying the SVC model to the test set stored as: output//CorrelationKernel/pearson///result_Quant-alpha0p01-alphaCorr0p001-C10000000p0-entangleTypefull-balancedSamplingFalse-Simulation-dataMapFuncNone-nShotsNone-interactionYandYZ-weightNone-trainSize20000-testSize5000-foldIdx0-minOfK5.pkl
+Saving results dataframe took  0.018176555633544922  seconds.
+Running the code took  3983.5865030288696  seconds.
+######################################################
+ROC AUC:  0.9356732804490796
+F1 score:  0.9314791403286977
+Accuracy:  0.8916
