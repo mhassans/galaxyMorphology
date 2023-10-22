@@ -156,6 +156,7 @@ def addMeanAndStdDev(df, classical):
         df = df.assign(dataMapFunc = df.index.map(lambda x: str(ast.literal_eval(x)[2])))
         df = df.assign(interaction = df.index.map(lambda x: str(ast.literal_eval(x)[3])))
         df = df.assign(weight= df.index.map(lambda x: str(ast.literal_eval(x)[4])))
+        df = df.assign(alphaCorr= df.index.map(lambda x: str(ast.literal_eval(x)[5])))
     return df
 
 def dataMap_custom1(x):

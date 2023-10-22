@@ -4,8 +4,8 @@ import re
 import sys
 
 #SET THE PATH OF THE FILES HERE
-#resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/quantumKernel/'
-resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/classicalKernel/RBF/'
+resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/quantumKernel/Oct2023/pearson/'
+#resultsFilesPath = './jobsOutput/withoutTtype/minOfK5/classicalKernel/RBF/'
 
 df = pd.read_csv("hyperParOptResults.csv")#An empty df with column names
 
@@ -44,19 +44,26 @@ for fileName in glob.glob(resultsFilesPath + '*.o*'):
             alpha = hypePars_splitted[1].replace("alpha", "")
             if "p" in alpha:
                 alpha = alpha.replace("p", ".")
-            const_C = hypePars_splitted[2].replace("C", "")
+            alphaCorr = hypePars_splitted[2].replace("alphaCorr", "")
+            if "p" in alphaCorr:
+                alphaCorr = alphaCorr.replace("p", ".")
+            const_C = hypePars_splitted[3].replace("C", "")
             if "p" in const_C:
                 const_C = const_C.replace("p", ".")
-            dataMapFunc = hypePars_splitted[3].replace("dataMapFunc", "")
-            interaction = hypePars_splitted[4].replace("interaction", "")
-            weight = hypePars_splitted[5].replace("weight", "")
-            trainSize = hypePars_splitted[6].replace("trainSize", "")
-            testSize = hypePars_splitted[7].replace("testSize", "")
-            foldIdx = hypePars_splitted[8].replace("foldIdx", "")
-            minOfK = hypePars_splitted[9].replace("minOfK", "").replace(".pkl", "")
+            entangleType = hypePars_splitted[4].replace("entangleType", "")
+            balancedSampling = hypePars_splitted[5].replace("balancedSampling", "")
+            simulation = hypePars_splitted[6].replace("Simulation", "")
+            dataMapFunc = hypePars_splitted[7].replace("dataMapFunc", "")
+            nShots = hypePars_splitted[8].replace("nShots", "")
+            interaction = hypePars_splitted[9].replace("interaction", "")
+            weight = hypePars_splitted[10].replace("weight", "")
+            trainSize = hypePars_splitted[11].replace("trainSize", "")
+            testSize = hypePars_splitted[12].replace("testSize", "")
+            foldIdx = hypePars_splitted[13].replace("foldIdx", "")
+            minOfK = hypePars_splitted[14].replace("minOfK", "").replace(".pkl", "")
             if (trainSize=='20000' and testSize=='5000'):
                 #Index in this order: alpha, C-quant, dataMapFunc, interaction, weight
-                indexOfnewData = (alpha,const_C,dataMapFunc,interaction,weight)
+                indexOfnewData = (alpha,const_C,dataMapFunc,interaction,weight,alphaCorr)
                 newData = pd.DataFrame({
                     "TimeToRun-fold"+foldIdx: [time],
                     "rocAUC-fold"+foldIdx: [rocAUC],
