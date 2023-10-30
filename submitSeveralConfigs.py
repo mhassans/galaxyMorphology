@@ -35,10 +35,10 @@ def main(submitToBatch):
         data_map_func = None,
         interaction = ['Z', 'YY'],
         circuit_width = 5,
-        entangleType = 'linear',
+        entangleType = 'full',
         RunOnIBMdevice = False,
         nShots = 20000,
-        balancedSampling = True,
+        balancedSampling = False,
         trainPlusTestSize = 125,
         n_splits = 5,
         fold_idx = 0,
@@ -51,7 +51,7 @@ def main(submitToBatch):
     )
     #list of configs to iterate over 
     list_minOfK = [5]#[5, 10, 20]
-    list_trainPlusTestSize = [100]#[500, 1000, 2500, 5000, 10000]#, 25000, 50000]#[25000]
+    list_trainPlusTestSize = [100]#[500, 1000, 2500, 5000, 10000, 25000, 50000]#[25000]
     list_classical = [False] #e.g. [True, False]
     list_weight = [None] #class weights, e.g. [None, 'balanced']
     list_fold_idx = list(range(config['n_splits'])) # run over all folds
@@ -70,7 +70,7 @@ def main(submitToBatch):
     list_C_quant = [1.0e+7]#[1000, 1.0e+5]#[10, 1000, 1.0e+5, 1.0e+6]
     list_data_map_func = [None]#[dataMap_custom1, dataMap_custom2, dataMap_custom3, dataMap_custom4]
     list_interaction = [['Y', 'YZ']] #a subset of singleThenTwoQubitInt
-    list_nShots = [None]#[4000, 8000, 16000, 32000, 64000, 128000, None]
+    list_nShots = [None]#[4000, 40000]#[4000, 8000, 16000, 32000, 64000, 128000, None]
    
     for nShot in list_nShots:
         config['nShots'] = nShot
